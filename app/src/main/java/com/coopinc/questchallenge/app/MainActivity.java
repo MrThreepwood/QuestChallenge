@@ -12,6 +12,10 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.container_main);
+        if (findViewById(R.id.main_container) != null) {
+            LoginFragment login = new LoginFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
+        }
     }
 
 
