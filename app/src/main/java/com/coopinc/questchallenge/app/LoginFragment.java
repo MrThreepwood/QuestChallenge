@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 
 public class LoginFragment extends Fragment {
@@ -41,13 +44,20 @@ public class LoginFragment extends Fragment {
         EditText editPassword = (EditText) getView().findViewById(R.id.password);
         String password = editPassword.getText().toString();
         if(userName != null && password != null) {
+            if(userName.length()==0) {
+                editName.setError("A user name is required.");
+            }
+            if(password.length()==0){
+                editPassword.setError("A password is required.");
+            }
+            TextView loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
             if (userName.equals("Lancelot") && password.equals("arthurDoesntKnow")) {
-                Button login = (Button) view;
-                login.setText("Todo");
+                loginIndicator.setTextColor(getResources().getColor(R.color.green));
+                loginIndicator.setText("transition");
             }
             else {
-                Button login = (Button) view;
-                login.setText("Nope");
+                loginIndicator.setTextColor(getResources().getColor(R.color.red));
+                loginIndicator.setText("Invalid user name or password");
             }
         }
     }
