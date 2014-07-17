@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -35,7 +36,19 @@ public class LoginFragment extends Fragment {
         });
     }
     public void login(View view) {
-        Button login = (Button) view;
-        login.setText("Todo");
+        EditText editName = (EditText) getView().findViewById(R.id.user_name);
+        String userName = editName.getText().toString();
+        EditText editPassword = (EditText) getView().findViewById(R.id.password);
+        String password = editPassword.getText().toString();
+        if(userName != null && password != null) {
+            if (userName.equals("Lancelot") && password.equals("arthurDoesntKnow")) {
+                Button login = (Button) view;
+                login.setText("Todo");
+            }
+            else {
+                Button login = (Button) view;
+                login.setText("Nope");
+            }
+        }
     }
 }
