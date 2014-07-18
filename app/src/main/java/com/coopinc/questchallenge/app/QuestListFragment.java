@@ -1,29 +1,18 @@
 package com.coopinc.questchallenge.app;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
-import com.coopinc.questchallenge.app.dummy.DummyContent;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class QuestListFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -35,33 +24,20 @@ public class QuestListFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_questlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
         mListView = (ListView) view;
-        if(mAdapter == null) {
-            System.out.println("The adapter is null.");
-        }
-        if(mListView == null) {
-            System.out.println("The list view is null.");
-        }
         mListView.setAdapter(mAdapter);
-
+        quests = retrieveQuests(false);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
-        ParseQuery<QuestInfo> query = ParseQuery.getQuery("Quests");
-        query.findInBackground(new FindCallback<QuestInfo>() {
-            @Override
-            public void done(List<QuestInfo> parseObjects, ParseException e) {
-                if(e != null) {
-                    Log.d("quests", "Error" + e.getMessage());
-                }
-                else {
-                    quests.clear();
-                    quests.addAll(parseObjects);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+
         return view;
+    }
+    private ArrayList<QuestInfo> retrieveQuests (boolean reset) {
+        if (reset) {
+            ((MainActivity)getActivity()).cacheParseQuestQuery();
+        }
+        return ((MainActivity)getActivity()).quests;
     }
 
     private class QuestListAdapter extends BaseAdapter {
@@ -108,7 +84,9 @@ public class QuestListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        Bundle args = new Bundle();
+        args.putInt("quest", position);
+        ((MainActivity)getActivity()).fragmentSwap(this, new QuestDetails(), args);
     }
 }
 

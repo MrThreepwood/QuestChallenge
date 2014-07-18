@@ -1,20 +1,30 @@
 package com.coopinc.questchallenge.app;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends ActionBarActivity {
     View mainContainer;
+    public ArrayList<QuestInfo> quests;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +32,7 @@ public class MainActivity extends ActionBarActivity {
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(QuestInfo.class);
         Parse.initialize(this, "ZABSkDfHCfLS3Ad1HXZgNDkK6VGaJ03aAqH2P2an", "R5dqUkiw5CEM5Ghb13Fy1Cww0kDWykoiIIH6RVRE");
+        cacheParseQuestQuery();
         if (savedInstanceState == null) {
             if (findViewById(R.id.main_container) != null) {
 
@@ -30,6 +41,25 @@ public class MainActivity extends ActionBarActivity {
                 getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
             }
         }
+    }
+    //Poor replacement for .PinAllInBackground.
+    //TODO:Make this thread safe, or make .Pin work
+    public void cacheParseQuestQuery () {
+        ParseQuery<QuestInfo> query = ParseQuery.getQuery("Quests");
+        query.include("questGiver");
+        query.findInBackground(new FindCallback<QuestInfo>() {
+            @Override
+            public void done(List<QuestInfo> questInfos, ParseException e) {
+                if (e == null) {
+                    if(questInfos != null) {
+                        quests = (ArrayList<QuestInfo>) questInfos;
+                    }
+                }
+                else {
+                    Log.d("parse error", "error with query" + e.getMessage());
+                }
+            }
+        });
     }
 
 
@@ -44,12 +74,16 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-    public void fragmentSwap(Fragment current, Fragment next) {
-
+    public void fragmentSwap(Fragment current, Fragment next, Bundle args) {
+        if (args != null) {
+            next.setArguments(args);
+        }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(mainContainer.getId(), next);
         ft.addToBackStack(null);

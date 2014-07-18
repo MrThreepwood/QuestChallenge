@@ -7,6 +7,12 @@ import com.parse.ParseUser;
 
 @ParseClassName("Quests")
 public class QuestInfo extends ParseObject {
+    public String objectId;
+
+    public String getObjectId() {
+        return getObjectId();
+    }
+
     public String getAcceptedBy() {
         return getString("acceptedBy");
     }
@@ -63,10 +69,8 @@ public class QuestInfo extends ParseObject {
     }
 
     public String getQuestGiver() {
-        /*
-        String name = questGiver.getUsername();
-        return name;*/
-        return "hi";
+        ParseUser user = getParseUser("questGiver");
+        return user.getString("name");
     }
 
     public void setQuestGiver(String questGiver) {

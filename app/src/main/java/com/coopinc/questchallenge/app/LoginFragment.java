@@ -1,12 +1,14 @@
 package com.coopinc.questchallenge.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -52,7 +54,7 @@ public class LoginFragment extends Fragment {
             }
             TextView loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
             if (userName.equals("L") && password.equals("a")) {
-                ((MainActivity)getActivity()).fragmentSwap(this, new QuestListFragment());
+                ((MainActivity)getActivity()).fragmentSwap(this, new QuestListFragment(), null);
             }
             else {
                 loginIndicator.setTextColor(getResources().getColor(R.color.red));
