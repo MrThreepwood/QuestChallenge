@@ -51,9 +51,8 @@ public class LoginFragment extends Fragment {
                 editPassword.setError("A password is required.");
             }
             TextView loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
-            if (userName.equals("Lancelot") && password.equals("arthurDoesntKnow")) {
-                loginIndicator.setTextColor(getResources().getColor(R.color.green));
-                loginIndicator.setText("transition");
+            if (userName.equals("L") && password.equals("a")) {
+                ((MainActivity)getActivity()).fragmentSwap(this, new QuestListFragment());
             }
             else {
                 loginIndicator.setTextColor(getResources().getColor(R.color.red));

@@ -22,11 +22,13 @@ public class MainActivity extends ActionBarActivity {
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(QuestInfo.class);
         Parse.initialize(this, "ZABSkDfHCfLS3Ad1HXZgNDkK6VGaJ03aAqH2P2an", "R5dqUkiw5CEM5Ghb13Fy1Cww0kDWykoiIIH6RVRE");
-        if (findViewById(R.id.main_container) != null) {
+        if (savedInstanceState == null) {
+            if (findViewById(R.id.main_container) != null) {
 
-            mainContainer = findViewById(R.id.main_container);
-            LoginFragment login = new LoginFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
+                mainContainer = findViewById(R.id.main_container);
+                LoginFragment login = new LoginFragment();
+                getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package com.coopinc.questchallenge.app;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseClassName;
+import com.parse.ParseUser;
 
 @ParseClassName("Quests")
 public class QuestInfo extends ParseObject {
@@ -54,28 +55,21 @@ public class QuestInfo extends ParseObject {
     }
 
     public String getQuestName() {
-        return getString("questName");
+        return getString("name");
     }
 
     public void setQuestName(String questName) {
-        put("questName",questName);
+        put("name",questName);
     }
 
     public String getQuestGiver() {
-        return getString("questGiver");
+        /*
+        String name = questGiver.getUsername();
+        return name;*/
+        return "hi";
     }
 
     public void setQuestGiver(String questGiver) {
         put("questGiver",questGiver);
     }
-
-    String objectId;
-    String acceptedBy;
-    int alignment;
-    boolean completed;
-    String description;
-    ParseGeoPoint location;
-    String locationImageUrl;
-    String questName;
-    String questGiver;
 }
