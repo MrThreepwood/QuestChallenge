@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.container_main);
+        Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(QuestInfo.class);
         Parse.initialize(this, "ZABSkDfHCfLS3Ad1HXZgNDkK6VGaJ03aAqH2P2an", "R5dqUkiw5CEM5Ghb13Fy1Cww0kDWykoiIIH6RVRE");
@@ -42,8 +43,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     }
-    //Poor replacement for .PinAllInBackground.
-    //TODO:Make this thread safe, or make .Pin work
+    //Poor replacement for .PinAllInBackground
     public void cacheParseQuestQuery () {
         ParseQuery<QuestInfo> query = ParseQuery.getQuery("Quests");
         query.include("questGiver");
@@ -52,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
             public void done(List<QuestInfo> questInfos, ParseException e) {
                 if (e == null) {
                     if(questInfos != null) {
-                        quests = (ArrayList<QuestInfo>) questInfos;
+                        QuestInfo.pinAllInBackground(questInfos);
                     }
                 }
                 else {

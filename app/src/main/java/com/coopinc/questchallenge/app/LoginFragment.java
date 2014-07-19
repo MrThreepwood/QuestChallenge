@@ -17,7 +17,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends BaseFragment {
 
     public LoginFragment() {
         // Required empty public constructor

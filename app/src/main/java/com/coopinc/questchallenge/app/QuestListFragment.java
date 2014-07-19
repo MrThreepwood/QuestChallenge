@@ -12,12 +12,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class QuestListFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class QuestListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
-    ArrayList<QuestInfo> quests = new ArrayList<QuestInfo>();
+    List<QuestInfo> quests = new ArrayList<QuestInfo>();
     private ListView mListView;
     private QuestListAdapter mAdapter = new QuestListAdapter();
 
@@ -27,17 +32,27 @@ public class QuestListFragment extends Fragment implements AdapterView.OnItemCli
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
         mListView = (ListView) view;
         mListView.setAdapter(mAdapter);
-        quests = retrieveQuests(false);
+        retrieveQuests(false);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
         return view;
     }
-    private ArrayList<QuestInfo> retrieveQuests (boolean reset) {
+    private void retrieveQuests (boolean reset) {
         if (reset) {
             ((MainActivity)getActivity()).cacheParseQuestQuery();
         }
-        return ((MainActivity)getActivity()).quests;
+        ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
+        query.include("questGiver");
+        query.fromLocalDatastore();
+        query.findInBackground(new FindCallback<QuestInfo>() {
+            @Override
+            public void done(List<QuestInfo> questInfos, ParseException e) {
+                quests.clear();
+                quests.addAll(questInfos);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private class QuestListAdapter extends BaseAdapter {

@@ -9,10 +9,6 @@ import com.parse.ParseUser;
 public class QuestInfo extends ParseObject {
     public String objectId;
 
-    public String getObjectId() {
-        return getObjectId();
-    }
-
     public String getAcceptedBy() {
         return getString("acceptedBy");
     }

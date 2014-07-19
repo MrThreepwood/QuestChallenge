@@ -2,17 +2,17 @@
 <pre-dex-items>
 
     <item
-        dex="C:\Users\Guybrush\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-bf5353cfcd603444b6048d7ff67034f63f837d64.jar"
-        jar="C:\Users\Guybrush\AppData\Local\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
-    <item
         dex="C:\Users\Guybrush\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\Parse-1.5.1-594be90307a561350220c1d3af293763286b552a.jar"
         jar="C:\Users\Guybrush\AndroidStudioProjects\QuestChallenge\libs\Parse-1.5.1.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="3d645417e7780d44f32e29a3ec6b729b75aef26c"/>
+    <item
+        dex="C:\Users\Guybrush\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-bf5353cfcd603444b6048d7ff67034f63f837d64.jar"
+        jar="C:\Users\Guybrush\AppData\Local\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
     <item
         dex="C:\Users\Guybrush\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\classes-990956542e99eb27f32b05d4d6a57233a0b91cc0.jar"
         jar="C:\Users\Guybrush\AndroidStudioProjects\QuestChallenge\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
