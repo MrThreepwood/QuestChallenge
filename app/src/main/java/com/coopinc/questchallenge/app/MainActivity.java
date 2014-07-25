@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import com.parse.FindCallback;
 import com.parse.Parse;
-import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -33,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(QuestInfo.class);
         Parse.initialize(this, "ZABSkDfHCfLS3Ad1HXZgNDkK6VGaJ03aAqH2P2an", "R5dqUkiw5CEM5Ghb13Fy1Cww0kDWykoiIIH6RVRE");
-        cacheParseQuestQuery();
+        cacheParseQuestsQuery();
         if (savedInstanceState == null) {
             if (findViewById(R.id.main_container) != null) {
 
@@ -44,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
     //Poor replacement for .PinAllInBackground
-    public void cacheParseQuestQuery () {
+    public void cacheParseQuestsQuery() {
         ParseQuery<QuestInfo> query = ParseQuery.getQuery("Quests");
         query.include("questGiver");
         query.findInBackground(new FindCallback<QuestInfo>() {
@@ -80,13 +79,15 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    public void fragmentSwap(Fragment current, Fragment next, Bundle args) {
+    public void fragmentSwap(Fragment current, Fragment next, Bundle args, Boolean addToBackStack) {
         if (args != null) {
             next.setArguments(args);
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(mainContainer.getId(), next);
-        ft.addToBackStack(null);
+        if (addToBackStack) {
+            ft.addToBackStack(null);
+        }
         ft.commit();
     }
 }

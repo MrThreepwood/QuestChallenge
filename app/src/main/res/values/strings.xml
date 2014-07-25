@@ -8,6 +8,7 @@
     <string name="login">Login</string>
     <string name="public_name_description">This is the name that will be displayed when you post or accept a quest.</string>
     <string name="public_name">Public name</string>
+    <string name="loading">loading</string>
     <string-array name="alignment_spinner">
         <item>Good</item>
         <item>Neutral</item>

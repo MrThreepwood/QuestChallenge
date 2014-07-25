@@ -1,7 +1,6 @@
 package com.coopinc.questchallenge.app;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,21 +29,23 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
-        mListView = (ListView) view;
+        mListView = (ListView) view.findViewById(R.id.quest_list);
         mListView.setAdapter(mAdapter);
-        retrieveQuests(false);
+        retrieveQuests(false, view);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
         return view;
     }
-    private void retrieveQuests (boolean reset) {
+    private void retrieveQuests (boolean reset, View view) {
         if (reset) {
-            ((MainActivity)getActivity()).cacheParseQuestQuery();
+            getMainActivity().cacheParseQuestsQuery();
         }
         ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
         query.include("questGiver");
         query.fromLocalDatastore();
+        View loading = view.findViewById(R.id.loading_text);
+        loading.setVisibility(View.VISIBLE);
         query.findInBackground(new FindCallback<QuestInfo>() {
             @Override
             public void done(List<QuestInfo> questInfos, ParseException e) {
@@ -53,6 +54,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
                 mAdapter.notifyDataSetChanged();
             }
         });
+        loading.setVisibility(View.GONE);
     }
 
     private class QuestListAdapter extends BaseAdapter {
@@ -101,7 +103,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Bundle args = new Bundle();
         args.putInt("quest", position);
-        ((MainActivity)getActivity()).fragmentSwap(this, new QuestDetails(), args);
+        getMainActivity().fragmentSwap(this, new QuestDetails(), args, true);
     }
 }
 

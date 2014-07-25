@@ -25,7 +25,7 @@ public class QuestDetails extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_quest_deatails, container, false);
+        View view = inflater.inflate(R.layout.fragment_quest_details, container, false);
 
         mQuestTitle = (TextView) view.findViewById(R.id.quest_title);
         mQuestGiver = (TextView) view.findViewById(R.id.quest_giver);
