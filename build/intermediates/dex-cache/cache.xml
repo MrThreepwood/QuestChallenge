@@ -8,16 +8,22 @@
         revision="19.1.0"
         sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
     <item
+        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\Parse-1.5.1-97ed629edcf172a307514442e38ddee0e021b735.jar"
+        jar="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\libs\Parse-1.5.1.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3d645417e7780d44f32e29a3ec6b729b75aef26c"/>
+    <item
         dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-e311e493b238b75da4095bd5ee7b69d76d73dc42.jar"
         jar="C:\Program Files (x86)\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
     <item
-        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\Parse-1.5.1-97ed629edcf172a307514442e38ddee0e021b735.jar"
-        jar="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\libs\Parse-1.5.1.jar"
+        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\classes-2ee4c1538ccd0fef6098cc4bcea4faf1ce62439f.jar"
+        jar="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.77\classes.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="3d645417e7780d44f32e29a3ec6b729b75aef26c"/>
+        sha1="b6a82434c1eca686607867cd906bcc80ed987837"/>
 
 </pre-dex-items>

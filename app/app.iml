@@ -66,6 +66,7 @@
     <orderEntry type="library" exported="" name="1_Parse-1.5.1" level="project" />
     <orderEntry type="library" exported="" name="2_Parse-1.5.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-19.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-5.0.77" level="project" />
   </component>
 </module>
 
