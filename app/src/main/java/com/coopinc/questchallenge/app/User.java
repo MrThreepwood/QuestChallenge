@@ -10,9 +10,8 @@ import com.parse.ParseUser;
 @ParseClassName("_User")
 public class User extends ParseUser {
     public String getUserName() {
-        return getString("userName");
+        return getString("username");
     }
-    private ParseGeoPoint location;
 
     public ParseGeoPoint getLocation() {
         return getParseGeoPoint("location");
@@ -23,12 +22,28 @@ public class User extends ParseUser {
     }
 
     public void setUserName(String userName) {
-       put("userName", userName);
+       put("username", userName);
     }
-    public String getAlignment () {
-        return getString("Alignment");
+    public int getAlignment () {
+        return getInt("alignment");
     }
     public void setAlignment(int alignment) {
         put("alignment", alignment);
+    }
+
+    public String getName() {
+        return getString("name");
+    }
+
+    public void setName(String name) {
+        put("name", name);
+    }
+
+    public String getImageUrl() {
+        return getString("imageUrl");
+    }
+
+    public void setImageUrl(String imageUrl) {
+        put("imageUrl", imageUrl);
     }
 }

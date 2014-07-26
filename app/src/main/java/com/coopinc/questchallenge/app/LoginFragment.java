@@ -32,6 +32,7 @@ public class LoginFragment extends BaseFragment {
     EditText editPassword;
     TextView loginIndicator;
     boolean connection;
+    boolean loggingIn;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -52,7 +53,7 @@ public class LoginFragment extends BaseFragment {
         editName = (EditText) getView().findViewById(R.id.user_name);
         SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("SharedPrefs", 0);
         String rememberedName = sharedPreferences.getString("userName", "");
-        if (TextUtils.isEmpty(rememberedName)) {
+        if (!TextUtils.isEmpty(rememberedName)) {
             editName.setText(rememberedName);
         }
         editPassword = (EditText) getView().findViewById(R.id.password);
@@ -83,6 +84,7 @@ public class LoginFragment extends BaseFragment {
         }
     }
     private void checkLogin(View view) {
+        loginIndicator.setText("One moment...");
         if(!connection) {
             checkConnection();
             return;
@@ -104,6 +106,7 @@ public class LoginFragment extends BaseFragment {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
                     if (e == null) {
+
                         login(parseUser);
                     }
                     else {
@@ -120,8 +123,8 @@ public class LoginFragment extends BaseFragment {
             sharedPreferences.edit().putString("userName", name);
         }
         MainActivity mainActivity = getMainActivity();
-        mainActivity.loggedUser = (User) parseUser;
-        mainActivity.loggedIn = true;
+        ((ApplicationInfo)mainActivity.getApplicationContext()).loggedUser = (User) parseUser;
+        ((ApplicationInfo)mainActivity.getApplicationContext()).loggedIn = true;
         mainActivity.fragmentSwap(this, new QuestListFragment(), null, false);
     }
     private void register () {

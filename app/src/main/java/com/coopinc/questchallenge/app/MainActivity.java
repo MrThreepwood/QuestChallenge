@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,22 +28,19 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
     View mainContainer;
-    public boolean loggedIn;
-    public User loggedUser;
+    private boolean started = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.container_main);
-        Parse.enableLocalDatastore(this);
-        ParseObject.registerSubclass(User.class);
-        ParseObject.registerSubclass(QuestInfo.class);
-        Parse.initialize(this, "ZABSkDfHCfLS3Ad1HXZgNDkK6VGaJ03aAqH2P2an", "R5dqUkiw5CEM5Ghb13Fy1Cww0kDWykoiIIH6RVRE");
         if (savedInstanceState == null) {
-            if (findViewById(R.id.main_container) != null) {
-
-                mainContainer = findViewById(R.id.main_container);
+            mainContainer = findViewById(R.id.main_container);
+            if (((ApplicationInfo)getApplicationContext()).loggedUser == null) {
                 LoginFragment login = new LoginFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
+            } else {
+                QuestListFragment questList = new QuestListFragment();
+                getSupportFragmentManager().beginTransaction().add(R.id.main_container, questList).commit();
             }
         }
     }
@@ -114,10 +112,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings && ((ApplicationInfo)getApplicationContext()).loggedUser != null) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
+        } else {
+            Toast.makeText(this, "Please login first", Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);
     }

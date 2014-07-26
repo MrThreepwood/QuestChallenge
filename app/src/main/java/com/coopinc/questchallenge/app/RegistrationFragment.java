@@ -5,6 +5,7 @@ package com.coopinc.questchallenge.app;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,17 +88,25 @@ public class RegistrationFragment extends BaseFragment {
             complete = false;
         }
         if(complete) {
-            ParseUser newUser = new ParseUser();
+            User newUser = new User();
             newUser.setEmail(email.toLowerCase());
             newUser.setPassword(password);
             newUser.setUsername(email.toLowerCase());
-            newUser.put("Alignment", 1);
-            newUser.put("Name", displayName);
+            newUser.setName(displayName);
+            newUser.setAlignment(1);
             newUser.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
                         tryLogin(email, password, e);
+                    } else {
+                        Log.e("parse error", e.getMessage()+ " code " + Integer.toString(e.getCode()));
+                        if (e.getCode() == 125) {
+                            etEmail.setError(getResources().getString(R.string.not_email));
+                        }
+                        if (e.getCode() == 202) {
+                            etEmail.setError(getResources().getString(R.string.email_taken));
+                        }
                     }
                 }
             });
@@ -108,13 +117,21 @@ public class RegistrationFragment extends BaseFragment {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
-                    getMainActivity().loggedUser = (User) parseUser;
+                    User user = (User) parseUser;
+                    //user.setAlignment(1);
+                    //user.setUserName(etDisplayName.getText().toString());
+                    //user.saveEventually();
+                    ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser = user;
+                    ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedIn = true;
                     toQuestList();
+                } else {
+                    Log.e("parse error", e.getMessage()+ " code " + Integer.toString(e.getCode()));
                 }
             }
         });
     }
     private void toQuestList () {
+        getMainActivity().getSupportFragmentManager().popBackStack();
         getMainActivity().fragmentSwap(this, new QuestListFragment(), null, false);
     }
 

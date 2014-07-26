@@ -26,6 +26,7 @@
     <string name="register_password_required">A password is required.</string>
     <string name="verify_password_required">Please verify your password.</string>
     <string name="passwords_dont_match">Passwords do not match.</string>
+    <string name="email_taken">An account already exists with this e-mail.</string>
 
     //Quest list screen
     <string name="loading">loading</string>

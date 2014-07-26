@@ -2,6 +2,7 @@ package com.coopinc.questchallenge.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +22,7 @@ public class SettingsActivity extends Activity {
     EditText displayName;
     Button resetLocation;
     Button changeName;
+    int currentAlignment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,23 +31,14 @@ public class SettingsActivity extends Activity {
             displayName = (EditText) findViewById(R.id.public_name);
             changeName = (Button) findViewById(R.id.change_name);
             alignmentSpinner = (Spinner) findViewById(R.id.alignment_spinner);
+            User user = ((ApplicationInfo)getApplicationContext()).loggedUser;
+            currentAlignment = user.getAlignment();
+            displayName.setText(user.getName());
+            alignmentSpinner.setSelection(currentAlignment);
             resetLocation = (Button) findViewById(R.id.update_location);
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.alignment_spinner, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             alignmentSpinner.setAdapter(adapter);
-            //TODO:Figure out what listener works on spinners
-            /*alignmentSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    setAlignment(position);
-                }
-            });*/
-            changeName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    changeName(changeName.getText().toString());
-                }
-            });
             resetLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -54,15 +47,46 @@ public class SettingsActivity extends Activity {
             });
         }
     }
-    public void setAlignment (int alignment) {
-        User user = ((MainActivity)getParent()).loggedUser;
-        user.setAlignment(alignment);
-        user.saveEventually();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        alignmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setAlignment(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        changeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeName(displayName.getText().toString());
+            }
+        });
+    }
+
+    public void setAlignment (int id) {
+
+        User user = ((ApplicationInfo)getApplicationContext()).loggedUser;
+        if (currentAlignment != id) {
+            user.setAlignment(user.getAlignment());
+            user.saveEventually();
+            currentAlignment = id;
+        }
     }
     private void changeName (String newName) {
-        User user = ((MainActivity)getParent()).loggedUser;
-        user.setUserName(newName);
-        user.saveEventually();
+        if(TextUtils.isEmpty(newName)) {
+            displayName.setError("Please enter a display name.");
+        }
+        else {
+            User user = ((ApplicationInfo) getApplicationContext()).loggedUser;
+            user.setUserName(newName);
+            user.saveEventually();
+        }
     }
     private void resetLocation () {
         //TODO:Figure out how to access gps
