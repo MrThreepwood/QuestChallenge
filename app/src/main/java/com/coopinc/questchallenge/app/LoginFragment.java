@@ -2,14 +2,17 @@ package com.coopinc.questchallenge.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +25,13 @@ import org.w3c.dom.Text;
 
 
 public class LoginFragment extends BaseFragment {
+    Button loginButton;
+    EditText editName;
+    CheckBox rememberUserName;
+    Button signUp;
+    EditText editPassword;
+    TextView loginIndicator;
+    boolean connection;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -36,44 +46,85 @@ public class LoginFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        Button loginButton = (Button) getView().findViewById(R.id.login);
+        loginButton = (Button) getView().findViewById(R.id.login);
+        loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
+        rememberUserName = (CheckBox) getView().findViewById(R.id.remember_user_name);
+        editName = (EditText) getView().findViewById(R.id.user_name);
+        SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("SharedPrefs", 0);
+        String rememberedName = sharedPreferences.getString("userName", "");
+        if (TextUtils.isEmpty(rememberedName)) {
+            editName.setText(rememberedName);
+        }
+        editPassword = (EditText) getView().findViewById(R.id.password);
+        signUp = (Button) getView().findViewById(R.id.sign_up);
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                register();
+            }
+        });
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkLogin(v);
             }
         });
+        checkConnection();
+    }
+    private void checkConnection () {
+        if (getMainActivity().checkConnectionMaybeQuery(true)) {
+            loginIndicator.setText("");
+            loginButton.setText(R.string.login);
+            connection = true;
+        }   else {
+            loginIndicator.setText(R.string.no_connection);
+            loginButton.setText(R.string.retry_connection);
+            connection = false;
+        }
     }
     private void checkLogin(View view) {
+        if(!connection) {
+            checkConnection();
+            return;
+        }
         boolean complete = true;
-        EditText editName = (EditText) getView().findViewById(R.id.user_name);
         String userName = editName.getText().toString();
-        EditText editPassword = (EditText) getView().findViewById(R.id.password);
         String password = editPassword.getText().toString();
-        if(userName.length() == 0) {
-            editName.setError("A user name is required.");
+        if(TextUtils.isEmpty(userName)) {
+            editName.setError(getResources().getString(R.string.user_name_required));
             complete = false;
         }
-        if(password.length()==0){
-            editPassword.setError("A password is required.");
+        if(TextUtils.isEmpty(password)){
+            editPassword.setError(getResources().getString(R.string.password_required));
             complete = false;
         }
-        final TextView loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
+
         if (complete) {
             ParseUser.logInInBackground(userName.toLowerCase(), password, new LogInCallback() {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
-                    if (e == null)
-                        login();
+                    if (e == null) {
+                        login(parseUser);
+                    }
                     else {
-                        loginIndicator.setText("User name or login invalid");
-                        loginIndicator.setTextColor(getResources().getColor(R.color.red));
+                        loginIndicator.setText(R.string.login_failed);
                     }
                 }
             });
         }
     }
-    private void login () {
-        getMainActivity().fragmentSwap(this, new QuestListFragment(), null, false);
+    private void login (ParseUser parseUser) {
+        if(rememberUserName.isChecked()) {
+            String name = editName.getText().toString();
+            SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("SharedPrefs", 0);
+            sharedPreferences.edit().putString("userName", name);
+        }
+        MainActivity mainActivity = getMainActivity();
+        mainActivity.loggedUser = (User) parseUser;
+        mainActivity.loggedIn = true;
+        mainActivity.fragmentSwap(this, new QuestListFragment(), null, false);
+    }
+    private void register () {
+        getMainActivity().fragmentSwap(this, new RegistrationFragment(), null, true);
     }
 }

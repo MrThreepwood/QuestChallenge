@@ -2,28 +2,28 @@
 <pre-dex-items>
 
     <item
-        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\classes-04c048d0132660e470b345f80fe313738d46d287.jar"
-        jar="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
+        dex="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\classes-4c7449c4db17677c398d0af0a0ac381a763bec86.jar"
+        jar="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
     <item
-        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\Parse-1.5.1-97ed629edcf172a307514442e38ddee0e021b735.jar"
-        jar="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\libs\Parse-1.5.1.jar"
+        dex="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\classes-c18b6f6c2895db5c9902beb6c36c7bb254ce497c.jar"
+        jar="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.77\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="b6a82434c1eca686607867cd906bcc80ed987837"/>
+    <item
+        dex="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\Parse-1.5.1-b07fd9bb0cfaa8e4aa14a0d5a9c9a73bd53b628c.jar"
+        jar="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\libs\Parse-1.5.1.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="3d645417e7780d44f32e29a3ec6b729b75aef26c"/>
     <item
-        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-e311e493b238b75da4095bd5ee7b69d76d73dc42.jar"
-        jar="C:\Program Files (x86)\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        dex="C:\Users\Lori Breitbarth\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-51ecfca0f24ab02fbe8c032cdc0a06a4143d1fe1.jar"
+        jar="C:\Users\Lori Breitbarth\AppData\Local\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
-    <item
-        dex="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\pre-dexed\debug\classes-2ee4c1538ccd0fef6098cc4bcea4faf1ce62439f.jar"
-        jar="C:\Users\Guybrush\Documents\AndroidStudioProjects\QuestChallenge\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.77\classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="b6a82434c1eca686607867cd906bcc80ed987837"/>
 
 </pre-dex-items>

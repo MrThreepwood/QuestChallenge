@@ -20,10 +20,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:19.+'
-    compile 'com.android.support:support-v4:19.+'
     compile files('C:/Users/Unity/AndroidStudioProjects/QuestChallenge/libs/Parse-1.5.1.jar')
     compile files('C:/Users/Guybrush/AndroidStudioProjects/QuestChallenge/libs/Parse-1.5.1.jar')
-    compile files('C:/Users/Guybrush/Documents/AndroidStudioProjects/QuestChallenge/libs/Parse-1.5.1.jar')
+    compile files('C:/Users/Lori Breitbarth/Documents/AndroidStudioProjects/QuestChallenge/libs/Parse-1.5.1.jar')
+    compile 'com.android.support:appcompat-v7:19.+'
+    // You must install or update the Support Repository through the SDK manager to use this dependency.
+    compile 'com.android.support:support-v4:19.+'
     compile 'com.google.android.gms:play-services:5.0.77'
 }

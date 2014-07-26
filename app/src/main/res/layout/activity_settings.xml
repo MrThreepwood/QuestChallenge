@@ -8,13 +8,34 @@
         android:hint="@string/public_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <EditText
+    <TextView
         android:text="@string/public_name_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/change_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/change_name"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <Spinner
         android:id="@+id/alignment_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
+        <TextView
+            android:id="@+id/spinner_explanation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alignment_explanation"/>
+        </LinearLayout>
+    <Button
+        android:id="@+id/update_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/update_location"/>
 </LinearLayout>

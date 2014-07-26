@@ -1,6 +1,9 @@
 package com.coopinc.questchallenge.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +14,7 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +27,8 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
     View mainContainer;
-    public ArrayList<QuestInfo> quests;
+    public boolean loggedIn;
+    public User loggedUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +37,6 @@ public class MainActivity extends ActionBarActivity {
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(QuestInfo.class);
         Parse.initialize(this, "ZABSkDfHCfLS3Ad1HXZgNDkK6VGaJ03aAqH2P2an", "R5dqUkiw5CEM5Ghb13Fy1Cww0kDWykoiIIH6RVRE");
-        cacheParseQuestsQuery();
         if (savedInstanceState == null) {
             if (findViewById(R.id.main_container) != null) {
 
@@ -41,6 +45,22 @@ public class MainActivity extends ActionBarActivity {
                 getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
             }
         }
+    }
+    public boolean checkConnectionMaybeQuery (boolean query) {
+        ConnectivityManager connection = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connection != null) {
+            NetworkInfo[] info = connection.getAllNetworkInfo();
+            if (info != null) {
+                for (int n = 0; n < info.length; n++) {
+                    if (info[n].getState() == NetworkInfo.State.CONNECTED) {
+                        cacheParseQuestsQuery();
+                        cacheParseUsersQuery();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     //Poor replacement for .PinAllInBackground
     public void cacheParseQuestsQuery() {
@@ -52,6 +72,28 @@ public class MainActivity extends ActionBarActivity {
                 if (e == null) {
                     if(questInfos != null) {
                         QuestInfo.pinAllInBackground(questInfos);
+                    }
+                    else {
+                        //TODO:Display server contact issues.
+                    }
+                }
+                else {
+                    Log.d("parse error", "error with query" + e.getMessage());
+                }
+            }
+        });
+    }
+    public void cacheParseUsersQuery () {
+        ParseQuery<User> query = ParseQuery.getQuery("_Users");
+        query.findInBackground(new FindCallback<User>() {
+            @Override
+            public void done(List<User> users, ParseException e) {
+                if ( e == null ) {
+                    if (users != null) {
+                        User.pinAllInBackground(users);
+                    }
+                    else {
+                        //TODO: Display that we couldn't contact the servers.
                     }
                 }
                 else {
