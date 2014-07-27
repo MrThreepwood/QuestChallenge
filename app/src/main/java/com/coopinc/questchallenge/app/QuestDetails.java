@@ -70,6 +70,6 @@ public class QuestDetails extends Fragment {
         mQuestTitle.setText(quest.getQuestName());
         mQuestGiver.setText("Posted by:" + quest.getQuestGiver());
         mQuestDetails.setText(quest.getDescription());
-        Marker questGiver = map.getMap().addMarker(new MarkerOptions().position())
+        //Marker questGiver = map.getMap().addMarker(new MarkerOptions().position())
     }
 }

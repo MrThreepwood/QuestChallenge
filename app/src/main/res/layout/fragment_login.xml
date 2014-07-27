@@ -5,21 +5,23 @@
     android:layout_height="match_parent"
     tools:context="com.coopinc.questchallenge.app.LoginFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <EditText
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/user_name"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:textSize="25dp"/>
     <EditText
         android:password="true"
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
-        android:text="a"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:textSize="25dp"/>
     <TextView
         android:id="@+id/login_indicator"
         android:layout_gravity="center"
@@ -32,7 +34,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/remember_user_name"/>
+        android:text="@string/remember_user_name"
+        android:paddingBottom="10dp"
+        android:textSize="25dp"/>
     <Button
         android:id="@+id/login"
         android:layout_width="wrap_content"

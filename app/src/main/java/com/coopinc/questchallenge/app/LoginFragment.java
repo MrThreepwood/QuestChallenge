@@ -51,10 +51,11 @@ public class LoginFragment extends BaseFragment {
         loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
         rememberUserName = (CheckBox) getView().findViewById(R.id.remember_user_name);
         editName = (EditText) getView().findViewById(R.id.user_name);
-        SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("SharedPrefs", 0);
+        SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
         String rememberedName = sharedPreferences.getString("userName", "");
         if (!TextUtils.isEmpty(rememberedName)) {
             editName.setText(rememberedName);
+            rememberUserName.setChecked(true);
         }
         editPassword = (EditText) getView().findViewById(R.id.password);
         signUp = (Button) getView().findViewById(R.id.sign_up);
@@ -86,7 +87,6 @@ public class LoginFragment extends BaseFragment {
     private void checkLogin(View view) {
         if (loggingIn)
             return;
-        loginIndicator.setText("One moment...");
         if(!connection) {
             checkConnection();
             return;
@@ -105,6 +105,7 @@ public class LoginFragment extends BaseFragment {
 
         if (complete) {
             loggingIn = true;
+            loginIndicator.setText("One moment...");
             ParseUser.logInInBackground(userName.toLowerCase(), password, new LogInCallback() {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
@@ -123,8 +124,12 @@ public class LoginFragment extends BaseFragment {
     private void login (ParseUser parseUser) {
         if(rememberUserName.isChecked()) {
             String name = editName.getText().toString();
-            SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("SharedPrefs", 0);
-            sharedPreferences.edit().putString("userName", name);
+            SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
+            sharedPreferences.edit().putString("userName", name).commit();
+        }
+        else {
+            SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
+            sharedPreferences.edit().remove("userName");
         }
         MainActivity mainActivity = getMainActivity();
         ((ApplicationInfo)mainActivity.getApplicationContext()).loggedUser = (User) parseUser;

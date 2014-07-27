@@ -85,7 +85,7 @@ public class SettingsActivity extends Activity {
         }
         else {
             User user = ((ApplicationInfo) getApplicationContext()).loggedUser;
-            user.setUserName(newName);
+            user.setName(newName);
             user.saveEventually();
         }
     }

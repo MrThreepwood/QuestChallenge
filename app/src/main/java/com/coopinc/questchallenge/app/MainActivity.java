@@ -76,7 +76,6 @@ public class MainActivity extends ActionBarActivity {
                                 QuestInfo.pinAllInBackground(questInfos);
                             }
                         });
-                        //QuestInfo.pinAllInBackground(questInfos);
                     }
                     else {
                         //TODO:Display server contact issues.

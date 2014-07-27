@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -31,6 +32,8 @@ public class RegistrationFragment extends BaseFragment {
     private EditText etPassword;
     private EditText etVerifyPassword;
     private Button etRegister;
+    private boolean registering = false;
+    private TextView registeringIndicator;
 
 
     public RegistrationFragment() {
@@ -54,9 +57,12 @@ public class RegistrationFragment extends BaseFragment {
                 register();
             }
         });
+        registeringIndicator = (TextView) view.findViewById(R.id.trying_signup);
         return view;
     }
     public void register () {
+        if (registering)
+            return;
         boolean complete = true;
         final String email = etEmail.getText().toString();
         String displayName = etDisplayName.getText().toString();
@@ -88,6 +94,8 @@ public class RegistrationFragment extends BaseFragment {
             complete = false;
         }
         if(complete) {
+            registering = true;
+            registeringIndicator.setText(getResources().getString(R.string.trying_signup));
             User newUser = new User();
             newUser.setEmail(email.toLowerCase());
             newUser.setPassword(password);
@@ -100,11 +108,13 @@ public class RegistrationFragment extends BaseFragment {
                     if (e == null) {
                         tryLogin(email, password, e);
                     } else {
+                        registeringIndicator.setText("");
+                        registering = false;
                         Log.e("parse error", e.getMessage()+ " code " + Integer.toString(e.getCode()));
                         if (e.getCode() == 125) {
                             etEmail.setError(getResources().getString(R.string.not_email));
                         }
-                        if (e.getCode() == 202) {
+                        if (e.getCode() == 202 || e.getCode() == 203) {
                             etEmail.setError(getResources().getString(R.string.email_taken));
                         }
                     }
@@ -113,18 +123,15 @@ public class RegistrationFragment extends BaseFragment {
         }
     }
     private void tryLogin(String email, String password, ParseException e) {
-        ParseUser.logInInBackground(email, password, new LogInCallback() {
+        ParseUser.logInInBackground(email.toLowerCase(), password, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
-                    User user = (User) parseUser;
-                    //user.setAlignment(1);
-                    //user.setUserName(etDisplayName.getText().toString());
-                    //user.saveEventually();
-                    ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser = user;
+                    ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser = (User) parseUser;
                     ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedIn = true;
                     toQuestList();
                 } else {
+                    registeringIndicator.setText("Registration complete, login failed.");
                     Log.e("parse error", e.getMessage()+ " code " + Integer.toString(e.getCode()));
                 }
             }

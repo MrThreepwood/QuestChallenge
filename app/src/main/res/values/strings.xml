@@ -4,7 +4,7 @@
     <string name="app_name">QuestChallenge</string>
     <string name="action_settings">Settings</string>
     //Login screen
-    <string name="user_name">User Name</string>
+    <string name="user_name">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="remember_user_name">Remember my user name.</string>
@@ -26,6 +26,7 @@
     <string name="register_password_required">A password is required.</string>
     <string name="verify_password_required">Please verify your password.</string>
     <string name="passwords_dont_match">Passwords do not match.</string>
+    <string name="trying_signup">signing up, one moment...</string>
     <string name="email_taken">An account already exists with this e-mail.</string>
 
     //Quest list screen
