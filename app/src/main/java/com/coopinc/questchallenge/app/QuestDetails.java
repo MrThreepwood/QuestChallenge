@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -46,7 +47,6 @@ public class QuestDetails extends Fragment {
         fragmentTransaction.commit();
 
 
-
         final Bundle args = getArguments();
         //Retrieves the quest from the main activity.
         ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
@@ -70,5 +70,6 @@ public class QuestDetails extends Fragment {
         mQuestTitle.setText(quest.getQuestName());
         mQuestGiver.setText("Posted by:" + quest.getQuestGiver());
         mQuestDetails.setText(quest.getDescription());
+        Marker questGiver = map.getMap().addMarker(new MarkerOptions().position())
     }
 }

@@ -84,6 +84,8 @@ public class LoginFragment extends BaseFragment {
         }
     }
     private void checkLogin(View view) {
+        if (loggingIn)
+            return;
         loginIndicator.setText("One moment...");
         if(!connection) {
             checkConnection();
@@ -102,6 +104,7 @@ public class LoginFragment extends BaseFragment {
         }
 
         if (complete) {
+            loggingIn = true;
             ParseUser.logInInBackground(userName.toLowerCase(), password, new LogInCallback() {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
@@ -110,6 +113,7 @@ public class LoginFragment extends BaseFragment {
                         login(parseUser);
                     }
                     else {
+                        loggingIn = false;
                         loginIndicator.setText(R.string.login_failed);
                     }
                 }

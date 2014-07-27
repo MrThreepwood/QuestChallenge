@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -66,10 +67,16 @@ public class MainActivity extends ActionBarActivity {
         query.include("questGiver");
         query.findInBackground(new FindCallback<QuestInfo>() {
             @Override
-            public void done(List<QuestInfo> questInfos, ParseException e) {
+            public void done(final List<QuestInfo> questInfos, ParseException e) {
                 if (e == null) {
                     if(questInfos != null) {
-                        QuestInfo.pinAllInBackground(questInfos);
+                        QuestInfo.unpinAllInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                QuestInfo.pinAllInBackground(questInfos);
+                            }
+                        });
+                        //QuestInfo.pinAllInBackground(questInfos);
                     }
                     else {
                         //TODO:Display server contact issues.
@@ -85,10 +92,15 @@ public class MainActivity extends ActionBarActivity {
         ParseQuery<User> query = ParseQuery.getQuery("_Users");
         query.findInBackground(new FindCallback<User>() {
             @Override
-            public void done(List<User> users, ParseException e) {
+            public void done(final List<User> users, ParseException e) {
                 if ( e == null ) {
                     if (users != null) {
-                        User.pinAllInBackground(users);
+                        QuestInfo.unpinAllInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                User.pinAllInBackground(users);
+                            }
+                        });
                     }
                     else {
                         //TODO: Display that we couldn't contact the servers.

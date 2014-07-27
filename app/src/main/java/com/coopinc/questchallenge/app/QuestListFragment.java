@@ -24,6 +24,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     List<QuestInfo> quests = new ArrayList<QuestInfo>();
     private ListView mListView;
     private QuestListAdapter mAdapter = new QuestListAdapter();
+    private List<QuestInfo> adjustedQuests= new ArrayList<QuestInfo>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,12 +32,20 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
         mListView = (ListView) view.findViewById(R.id.quest_list);
         mListView.setAdapter(mAdapter);
-        retrieveQuests(false, view);
+        //retrieveQuests(false, view);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("Resume call", "resume is called");
+        retrieveQuests(false, getView());
+    }
+
     private void retrieveQuests (boolean reset, View view) {
         if (reset) {
             getMainActivity().cacheParseQuestsQuery();
@@ -51,6 +60,13 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
             public void done(List<QuestInfo> questInfos, ParseException e) {
                 quests.clear();
                 quests.addAll(questInfos);
+                adjustedQuests.clear();
+                User user = ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser;
+                for (int n = 0; n< quests.size(); n++) {
+                    if (quests.get(n).getAlignment() == user.getAlignment() || user.getAlignment() == 1 || quests.get(n).getAlignment() == 1) {
+                        adjustedQuests.add(quests.get(n));
+                    }
+                }
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -61,12 +77,12 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
 
         @Override
         public int getCount() {
-            return quests.size();
+            return adjustedQuests.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return quests.get(position);
+            return adjustedQuests.get(position);
         }
 
         @Override
@@ -81,7 +97,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
                 convertView = inflater.inflate(R.layout.quest_layouts, null);
             }
             TextView titleView = (TextView) convertView.findViewById(R.id.quest_title);
-            QuestInfo quest = quests.get(position);
+            QuestInfo quest = adjustedQuests.get(position);
             String questName = quest.getQuestName();
             titleView.setText(questName);
             TextView giverView = (TextView) convertView.findViewById(R.id.quest_giver);
@@ -89,11 +105,11 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
             giverView.setText(questGiver);
             Log.d("Quest name", "Quest giver is " + questGiver);
             switch (quest.getAlignment()) {
-                case 1: convertView.setBackgroundColor(getResources().getColor(R.color.green));
+                case 1: convertView.setBackgroundColor(getResources().getColor(R.color.grey));
                     break;
                 case 2: convertView.setBackgroundColor(getResources().getColor(R.color.red));
                     break;
-                default: convertView.setBackgroundColor(getResources().getColor(R.color.grey));
+                default: convertView.setBackgroundColor(getResources().getColor(R.color.green));
             }
             return convertView;
         }
@@ -102,7 +118,9 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Bundle args = new Bundle();
-        args.putInt("quest", position);
+        //Convert the position of the adjusted list to the position of quests (so that details can pull the right quest).
+        int adjustedPosition = quests.indexOf(adjustedQuests.get(position));
+        args.putInt("quest", adjustedPosition);
         getMainActivity().fragmentSwap(this, new QuestDetails(), args, true);
     }
 }

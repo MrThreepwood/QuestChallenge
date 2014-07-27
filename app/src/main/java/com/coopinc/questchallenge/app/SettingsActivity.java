@@ -34,11 +34,12 @@ public class SettingsActivity extends Activity {
             User user = ((ApplicationInfo)getApplicationContext()).loggedUser;
             currentAlignment = user.getAlignment();
             displayName.setText(user.getName());
-            alignmentSpinner.setSelection(currentAlignment);
+
             resetLocation = (Button) findViewById(R.id.update_location);
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.alignment_spinner, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             alignmentSpinner.setAdapter(adapter);
+            alignmentSpinner.setSelection(currentAlignment);
             resetLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -73,7 +74,7 @@ public class SettingsActivity extends Activity {
 
         User user = ((ApplicationInfo)getApplicationContext()).loggedUser;
         if (currentAlignment != id) {
-            user.setAlignment(user.getAlignment());
+            user.setAlignment(id);
             user.saveEventually();
             currentAlignment = id;
         }
