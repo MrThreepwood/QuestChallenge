@@ -45,7 +45,7 @@ public class QuestInfo extends ParseObject {
         return completedBy;
     }
     public void setCompletedBy(String value) {
-        put("completedBy", value);
+        addUnique("completedBy", value);
     }
 
     public int getAlignment() {
