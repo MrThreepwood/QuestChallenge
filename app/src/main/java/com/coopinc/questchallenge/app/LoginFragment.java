@@ -134,7 +134,7 @@ public class LoginFragment extends BaseFragment {
         MainActivity mainActivity = getMainActivity();
         ((ApplicationInfo)mainActivity.getApplicationContext()).loggedUser = (User) parseUser;
         ((ApplicationInfo)mainActivity.getApplicationContext()).loggedIn = true;
-        mainActivity.fragmentSwap(this, new QuestListFragment(), null, false);
+        mainActivity.fragmentSwap(this, new QuestsViewPager(), null, false);
     }
     private void register () {
         getMainActivity().fragmentSwap(this, new RegistrationFragment(), null, true);

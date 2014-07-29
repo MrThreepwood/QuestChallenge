@@ -12,8 +12,12 @@ import android.widget.TextView;
 
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +26,23 @@ import java.util.List;
 public class QuestListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     List<QuestInfo> quests = new ArrayList<QuestInfo>();
+    List<QuestInfo> localQuests = new ArrayList<QuestInfo>();
     private ListView mListView;
     private QuestListAdapter mAdapter = new QuestListAdapter();
     private List<QuestInfo> adjustedQuests= new ArrayList<QuestInfo>();
+    private int questDisplayStatus;
+    private User user;
+    private List<QuestInfo> acceptedQuests;
+    private List<QuestInfo> completedQuests;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        questDisplayStatus = getArguments().getInt("questStatus");
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
         mListView = (ListView) view.findViewById(R.id.quest_list);
         mListView.setAdapter(mAdapter);
+        user = ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser;
         //retrieveQuests(false, view);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -50,26 +61,61 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         if (reset) {
             getMainActivity().cacheParseQuestsQuery();
         }
-        ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
+        final ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
         query.include("questGiver");
         query.fromLocalDatastore();
+        try {
+            localQuests = query.find();
+        } catch (ParseException exception) {
+
+        }
+        quests.clear();
+        quests.addAll(localQuests);
         View loading = view.findViewById(R.id.loading_text);
         loading.setVisibility(View.VISIBLE);
-        query.findInBackground(new FindCallback<QuestInfo>() {
-            @Override
-            public void done(List<QuestInfo> questInfos, ParseException e) {
-                quests.clear();
-                quests.addAll(questInfos);
-                adjustedQuests.clear();
-                User user = ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser;
-                for (int n = 0; n< quests.size(); n++) {
-                    if (quests.get(n).getAlignment() == user.getAlignment() || user.getAlignment() == 1 || quests.get(n).getAlignment() == 1) {
-                        adjustedQuests.add(quests.get(n));
+        ParseQuery<QuestInfo> queryAccepted = new ParseQuery<QuestInfo>("Quests");
+        queryAccepted.whereEqualTo("acceptedBy" , user.getObjectId());
+        queryAccepted.fromLocalDatastore();
+        try {
+            acceptedQuests = queryAccepted.fromLocalDatastore().find();
+        } catch (ParseException exception) {
+
+        }
+        ParseQuery<QuestInfo> queryCompleted = new ParseQuery<QuestInfo>("Quests");
+        queryCompleted.whereEqualTo("completedBy" , user.getObjectId());
+        queryCompleted.fromLocalDatastore();
+        try {
+            completedQuests = queryCompleted.fromLocalDatastore().find();
+        } catch (ParseException exception) {
+
+        }
+        adjustedQuests.clear();
+
+        for (int n = 0; n< quests.size(); n++) {
+            QuestInfo quest = quests.get(n);
+            switch (questDisplayStatus) {
+
+
+                case 0:
+                    if (!acceptedQuests.contains(quest) && !completedQuests.contains(quest)) {
+                        if (quest.getAlignment() == user.getAlignment() || user.getAlignment() == 1 || quest.getAlignment() == 1) {
+                            adjustedQuests.add(quest);
+                        }
                     }
-                }
-                mAdapter.notifyDataSetChanged();
+                    break;
+                case 1:
+                    if (acceptedQuests.contains(quest))
+                        adjustedQuests.add(quest);
+                    break;
+                case 2:
+                    if (completedQuests.contains(quest))
+                        adjustedQuests.add(quest);
             }
-        });
+        }
+        //Remove this.
+//        adjustedQuests.clear();
+//        adjustedQuests.addAll(quests);
+        mAdapter.notifyDataSetChanged();
         loading.setVisibility(View.GONE);
     }
 
@@ -121,6 +167,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         //Convert the position of the adjusted list to the position of quests (so that details can pull the right quest).
         int adjustedPosition = quests.indexOf(adjustedQuests.get(position));
         args.putInt("quest", adjustedPosition);
+        args.putInt("questStatus", questDisplayStatus);
         getMainActivity().fragmentSwap(this, new QuestDetails(), args, true);
     }
 }

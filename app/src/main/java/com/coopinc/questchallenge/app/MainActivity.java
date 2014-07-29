@@ -116,6 +116,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add("Log off");
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -127,9 +128,17 @@ public class MainActivity extends ActionBarActivity {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
-        } else {
-            Toast.makeText(this, "Please login first", Toast.LENGTH_LONG).show();
         }
+        if (item.getTitle().toString().equalsIgnoreCase("Log off")) {
+            ApplicationInfo app = ((ApplicationInfo)getApplicationContext());
+            app.loggedUser = null;
+            app.loggedIn = false;
+
+            while (getSupportFragmentManager().popBackStackImmediate());
+            fragmentSwap(null, new LoginFragment(), null, false);
+            return true;
+        }
+        Toast.makeText(this, "Please login first", Toast.LENGTH_LONG).show();
         return super.onOptionsItemSelected(item);
     }
     public void fragmentSwap(Fragment current, Fragment next, Bundle args, Boolean addToBackStack) {

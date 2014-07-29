@@ -8,7 +8,6 @@
 
     <TextView
         android:id="@+id/quest_title"
-        android:textColor="@color/grey"
         android:textSize="40dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -28,5 +27,9 @@
             android:layout_height="wrap_content" />
 
     </ScrollView>
+    <Button
+        android:id="@+id/accept_complete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

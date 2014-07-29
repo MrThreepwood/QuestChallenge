@@ -5,15 +5,47 @@ import com.parse.ParseObject;
 import com.parse.ParseClassName;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @ParseClassName("Quests")
 public class QuestInfo extends ParseObject {
-    public String objectId;
 
-    public String getAcceptedBy() {
-        return getString("acceptedBy");
+    public List<String> getAcceptedBy() {
+        JSONArray jsonArray = getJSONArray("acceptedBy");
+        List<String> acceptedBy = new ArrayList<String>();
+        for (int n = 0; n < jsonArray.length(); n++) {
+            try {
+                acceptedBy.add(jsonArray.getString(n));
+            } catch (JSONException exception) {
+            }
+        }
+        return acceptedBy;
     }
-    public void setAcceptedBy(String value) {
-        put("AcceptedBy", value);
+    public void addAcceptedBy(String value) {
+        addUnique("acceptedBy", value);
+    }
+    public void removeAcceptedyBy(String value) {
+        List<String> userID = new ArrayList<String>();
+        userID.add(value);
+        removeAll("acceptedBy", userID);
+    }
+    public List<String> getCompletedBy() {
+        JSONArray jsonArray = getJSONArray("completedBy");
+        List<String> completedBy = new ArrayList<String>();
+        for (int n = 0; n< jsonArray.length(); n++) {
+            try {
+                completedBy.add(jsonArray.getString(n));
+            } catch (JSONException exception) {
+            }
+        }
+        return completedBy;
+    }
+    public void setCompletedBy(String value) {
+        put("completedBy", value);
     }
 
     public int getAlignment() {
@@ -22,14 +54,6 @@ public class QuestInfo extends ParseObject {
 
     public void setAlignment(int alignment) {
         put("alignment", alignment);
-    }
-
-    public boolean isCompleted() {
-        return getBoolean("completed");
-    }
-
-    public void setCompleted(boolean completed) {
-        put("completed", completed);
     }
 
     public String getDescription() {

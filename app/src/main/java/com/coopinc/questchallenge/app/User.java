@@ -46,4 +46,5 @@ public class User extends ParseUser {
     public void setImageUrl(String imageUrl) {
         put("imageUrl", imageUrl);
     }
+
 }

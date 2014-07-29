@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +34,9 @@ public class QuestDetails extends Fragment {
     private TextView mQuestTitle;
     private TextView mQuestDetails;
     private SupportMapFragment map;
+    private Button acceptComplete;
+    private int questStatus;
+    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,12 +46,31 @@ public class QuestDetails extends Fragment {
         mQuestGiver = (TextView) view.findViewById(R.id.quest_giver);
         mQuestDetails = (TextView) view.findViewById(R.id.quest_details);
         map = SupportMapFragment.newInstance();
+        acceptComplete = (Button) view.findViewById(R.id.accept_complete);
+        user = ((ApplicationInfo)getActivity().getApplicationContext()).loggedUser;
+        acceptComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                acceptComplete();
+            }
+        });
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
         fragmentTransaction.add(view.getId(), map);
         fragmentTransaction.commit();
 
 
         final Bundle args = getArguments();
+        questStatus = args.getInt("questStatus");
+        switch (questStatus) {
+            case 0: acceptComplete.setText("Accept quest.");
+                break;
+            case 1: acceptComplete.setText("Complete quest.");
+                break;
+            case 2:
+                acceptComplete.setText("Already completed.");
+                acceptComplete.setTextColor(getResources().getColor(R.color.grey));
+                break;
+        }
         //Retrieves the quest from the main activity.
         ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
         query.include("questGiver");
@@ -68,8 +91,30 @@ public class QuestDetails extends Fragment {
             return;
 
         mQuestTitle.setText(quest.getQuestName());
+        switch(quest.getAlignment()) {
+            case 1: mQuestTitle.setTextColor(getResources().getColor(R.color.grey));
+                break;
+            case 2: mQuestTitle.setTextColor(getResources().getColor(R.color.red));
+                break;
+            default: mQuestTitle.setTextColor(getResources().getColor(R.color.green));
+        }
         mQuestGiver.setText("Posted by:" + quest.getQuestGiver());
         mQuestDetails.setText(quest.getDescription());
         //Marker questGiver = map.getMap().addMarker(new MarkerOptions().position())
+    }
+    private void acceptComplete () {
+        switch (questStatus) {
+            case 0:
+                quest.addAcceptedBy(user.getObjectId());
+                acceptComplete.setText("Complete quest.");
+                quest.saveEventually();
+                break;
+            case 1:
+                quest.setCompletedBy(user.getObjectId());
+                quest.removeAcceptedyBy(user.getObjectId());
+                quest.saveEventually();
+                acceptComplete.setText("Already Completed.");
+                acceptComplete.setTextColor(getResources().getColor(R.color.grey));
+        }
     }
 }
