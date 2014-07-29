@@ -13,10 +13,6 @@ import android.widget.Spinner;
 
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseQuery;
-
-/**
- * Created by Guybrush on 7/18/2014.
- */
 public class SettingsActivity extends Activity {
     Spinner alignmentSpinner;
     EditText displayName;

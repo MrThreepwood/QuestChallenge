@@ -8,9 +8,6 @@ import com.coopinc.questchallenge.app.User;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
-/**
- * Created by Lori Breitbarth on 7/26/14.
- */
 public class ApplicationInfo extends Application {
     public boolean loggedIn = false;
     public User loggedUser;

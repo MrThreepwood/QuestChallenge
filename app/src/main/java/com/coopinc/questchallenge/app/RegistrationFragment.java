@@ -22,10 +22,6 @@ import com.parse.SignUpCallback;
 import org.w3c.dom.Text;
 
 
-/**
- * A simple {@link Fragment} subclass.
- *
- */
 public class RegistrationFragment extends BaseFragment {
     private EditText etEmail;
     private EditText etDisplayName;

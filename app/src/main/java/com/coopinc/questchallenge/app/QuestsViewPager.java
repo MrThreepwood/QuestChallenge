@@ -13,11 +13,7 @@ import android.view.ViewGroup;
 
 
 
-/**
- * A simple {@link Fragment} subclass.
- *
- */
-public class QuestsViewPager extends Fragment {
+public class QuestsViewPager extends Fragment  {
     ViewPager mViewPager;
     TabAdapter adapter;
 
@@ -33,9 +29,9 @@ public class QuestsViewPager extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_quests_view_pager, container, false);
         mViewPager = (ViewPager) view;
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        adapter = new TabAdapter(fm);
+        adapter = new TabAdapter(getChildFragmentManager());
         mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(3);
         return view;
     }
 
@@ -68,6 +64,7 @@ public class QuestsViewPager extends Fragment {
             questList.setArguments(args);
             return questList;
         }
+
     }
 
 

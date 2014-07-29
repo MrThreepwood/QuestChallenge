@@ -16,6 +16,7 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 
@@ -31,7 +32,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     private QuestListAdapter mAdapter = new QuestListAdapter();
     private List<QuestInfo> adjustedQuests= new ArrayList<QuestInfo>();
     private int questDisplayStatus;
-    private User user;
+    public User user;
     private List<QuestInfo> acceptedQuests;
     private List<QuestInfo> completedQuests;
 
@@ -42,7 +43,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
         mListView = (ListView) view.findViewById(R.id.quest_list);
         mListView.setAdapter(mAdapter);
-        user = ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser;
+        user = (User) ParseUser.getCurrentUser();
         //retrieveQuests(false, view);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -54,13 +55,10 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     public void onResume() {
         super.onResume();
         Log.d("Resume call", "resume is called");
-        retrieveQuests(false, getView());
+        retrieveQuests(getView());
     }
 
-    private void retrieveQuests (boolean reset, View view) {
-        if (reset) {
-            getMainActivity().cacheParseQuestsQuery();
-        }
+    private void retrieveQuests (View view) {
         final ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
         query.include("questGiver");
         query.fromLocalDatastore();
@@ -71,8 +69,6 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         }
         quests.clear();
         quests.addAll(localQuests);
-        View loading = view.findViewById(R.id.loading_text);
-        loading.setVisibility(View.VISIBLE);
         ParseQuery<QuestInfo> queryAccepted = new ParseQuery<QuestInfo>("Quests");
         queryAccepted.whereEqualTo("acceptedBy" , user.getObjectId());
         queryAccepted.fromLocalDatastore();
@@ -91,32 +87,29 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         }
         adjustedQuests.clear();
 
-        for (int n = 0; n< quests.size(); n++) {
-            QuestInfo quest = quests.get(n);
             switch (questDisplayStatus) {
 
 
                 case 0:
-                    if (!acceptedQuests.contains(quest) && !completedQuests.contains(quest)) {
-                        if (quest.getAlignment() == user.getAlignment() || user.getAlignment() == 1 || quest.getAlignment() == 1) {
-                            adjustedQuests.add(quest);
+                    for (int n = 0; n< quests.size(); n++) {
+                        QuestInfo quest = quests.get(n);
+                        if (!acceptedQuests.contains(quest) && !completedQuests.contains(quest)) {
+                            if (quest.getAlignment() == user.getAlignment() || user.getAlignment() == 1 || quest.getAlignment() == 1) {
+                                adjustedQuests.add(quest);
+                            }
                         }
                     }
                     break;
                 case 1:
-                    if (acceptedQuests.contains(quest))
-                        adjustedQuests.add(quest);
+                    adjustedQuests.addAll(acceptedQuests);
                     break;
                 case 2:
-                    if (completedQuests.contains(quest))
-                        adjustedQuests.add(quest);
-            }
+                    adjustedQuests.addAll(completedQuests);
         }
         //Remove this.
 //        adjustedQuests.clear();
 //        adjustedQuests.addAll(quests);
         mAdapter.notifyDataSetChanged();
-        loading.setVisibility(View.GONE);
     }
 
     private class QuestListAdapter extends BaseAdapter {

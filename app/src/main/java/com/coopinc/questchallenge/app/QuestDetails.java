@@ -24,9 +24,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-/**
- * Created by Guybrush on 7/18/2014.
- */
 public class QuestDetails extends Fragment {
     QuestInfo quest;
 
