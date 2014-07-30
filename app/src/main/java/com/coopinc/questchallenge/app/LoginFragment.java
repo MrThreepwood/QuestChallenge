@@ -1,28 +1,19 @@
 package com.coopinc.questchallenge.app;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-
-import org.w3c.dom.Text;
-
 
 public class LoginFragment extends BaseFragment {
     Button loginButton;
@@ -33,6 +24,7 @@ public class LoginFragment extends BaseFragment {
     TextView loginIndicator;
     boolean connection;
     boolean loggingIn;
+
 
     public LoginFragment() {
         // Required empty public constructor
@@ -68,13 +60,13 @@ public class LoginFragment extends BaseFragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkLogin(v);
+                checkLogin();
             }
         });
         checkConnection();
     }
     private void checkConnection () {
-        if (getMainActivity().checkConnectionMaybeQuery(true)) {
+        if (getMainActivity().checkConnectionMaybeQuery()) {
             loginIndicator.setText("");
             loginButton.setText(R.string.login);
             connection = true;
@@ -83,8 +75,11 @@ public class LoginFragment extends BaseFragment {
             loginButton.setText(R.string.retry_connection);
             connection = false;
         }
+
     }
-    private void checkLogin(View view) {
+
+
+    private void checkLogin() {
         if (loggingIn)
             return;
         if(!connection) {
@@ -111,7 +106,7 @@ public class LoginFragment extends BaseFragment {
                 public void done(ParseUser parseUser, ParseException e) {
                     if (e == null) {
 
-                        login(parseUser);
+                        login();
                     }
                     else {
                         loggingIn = false;
@@ -121,22 +116,20 @@ public class LoginFragment extends BaseFragment {
             });
         }
     }
-    private void login (ParseUser parseUser) {
+    private void login () {
         if(rememberUserName.isChecked()) {
             String name = editName.getText().toString();
             SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
-            sharedPreferences.edit().putString("userName", name).commit();
+            sharedPreferences.edit().putString("userName", name).apply();
         }
         else {
             SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
             sharedPreferences.edit().remove("userName");
         }
         MainActivity mainActivity = getMainActivity();
-        ((ApplicationInfo)mainActivity.getApplicationContext()).loggedUser = (User) parseUser;
-        ((ApplicationInfo)mainActivity.getApplicationContext()).loggedIn = true;
-        mainActivity.fragmentSwap(this, new QuestsViewPager(), null, false);
+        mainActivity.fragmentSwap(new QuestsViewPager(), null, false);
     }
     private void register () {
-        getMainActivity().fragmentSwap(this, new RegistrationFragment(), null, true);
+        getMainActivity().fragmentSwap(new RegistrationFragment(), null, true);
     }
 }

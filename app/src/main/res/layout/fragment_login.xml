@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.coopinc.questchallenge.app.LoginFragment">
-
     <EditText
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/user_name"
         android:gravity="center"
-        android:paddingBottom="10dp"
-        android:textSize="25dp"/>
+        android:paddingBottom="10sp"
+        android:textSize="25sp"/>
     <EditText
         android:password="true"
         android:id="@+id/password"
@@ -20,23 +19,23 @@
         android:layout_height="wrap_content"
         android:hint="@string/password"
         android:gravity="center"
-        android:paddingBottom="10dp"
-        android:textSize="25dp"/>
+        android:paddingBottom="10sp"
+        android:textSize="25sp"/>
     <TextView
         android:id="@+id/login_indicator"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/red"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
     <CheckBox
         android:id="@+id/remember_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/remember_user_name"
-        android:paddingBottom="10dp"
-        android:textSize="25dp"/>
+        android:paddingBottom="10sp"
+        android:textSize="25sp"/>
     <Button
         android:id="@+id/login"
         android:layout_width="wrap_content"

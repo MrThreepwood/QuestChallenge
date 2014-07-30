@@ -88,9 +88,8 @@ public class QuestInfo extends ParseObject {
         put("name",questName);
     }
 
-    public String getQuestGiver() {
-        ParseUser user = getParseUser("questGiver");
-        return user.getString("name");
+    public ParseUser getQuestGiver() {
+        return getParseUser("questGiver");
     }
 
     public void setQuestGiver(String questGiver) {

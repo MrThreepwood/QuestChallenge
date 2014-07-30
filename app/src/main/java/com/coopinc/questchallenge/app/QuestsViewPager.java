@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 public class QuestsViewPager extends Fragment  {
     ViewPager mViewPager;
     TabAdapter adapter;
+    static CharSequence availableQuests;
+    static CharSequence acceptedQuests;
+    static CharSequence completedQuests;
 
 
     public QuestsViewPager() {
@@ -32,6 +35,9 @@ public class QuestsViewPager extends Fragment  {
         adapter = new TabAdapter(getChildFragmentManager());
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(3);
+        availableQuests = getResources().getString(R.string.available_quests);
+        acceptedQuests = getResources().getString(R.string.accepted_quests);
+        completedQuests = getResources().getString(R.string.completed_quests);
         return view;
     }
 
@@ -44,9 +50,9 @@ public class QuestsViewPager extends Fragment  {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0: return "Available quests.";
-                case 1: return "Accepted quests.";
-                case 2: return "Completed quests.";
+                case 0: return availableQuests;
+                case 1: return acceptedQuests;
+                case 2: return completedQuests;
             }
             return super.getPageTitle(position);
         }

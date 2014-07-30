@@ -11,14 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
-import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +51,10 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
     public void onResume() {
         super.onResume();
         Log.d("Resume call", "resume is called");
-        retrieveQuests(getView());
+        retrieveQuests();
     }
 
-    private void retrieveQuests (View view) {
+    private void retrieveQuests () {
         final ParseQuery<QuestInfo> query = new ParseQuery<QuestInfo>("Quests");
         query.include("questGiver");
         query.fromLocalDatastore();
@@ -91,8 +87,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
 
 
                 case 0:
-                    for (int n = 0; n< quests.size(); n++) {
-                        QuestInfo quest = quests.get(n);
+                    for (QuestInfo quest : quests) {
                         if (!acceptedQuests.contains(quest) && !completedQuests.contains(quest)) {
                             if (quest.getAlignment() == user.getAlignment() || user.getAlignment() == 1 || quest.getAlignment() == 1) {
                                 adjustedQuests.add(quest);
@@ -140,7 +135,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
             String questName = quest.getQuestName();
             titleView.setText(questName);
             TextView giverView = (TextView) convertView.findViewById(R.id.quest_giver);
-            String questGiver = quest.getQuestGiver();
+            String questGiver = ((User)quest.getQuestGiver()).getName();
             giverView.setText(questGiver);
             Log.d("Quest name", "Quest giver is " + questGiver);
             switch (quest.getAlignment()) {
@@ -161,7 +156,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         int adjustedPosition = quests.indexOf(adjustedQuests.get(position));
         args.putInt("quest", adjustedPosition);
         args.putInt("questStatus", questDisplayStatus);
-        getMainActivity().fragmentSwap(this, new QuestDetails(), args, true);
+        getMainActivity().fragmentSwap(new QuestDetails(), args, true);
     }
 }
 

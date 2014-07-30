@@ -11,9 +11,7 @@ import android.os.Bundle;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -23,35 +21,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
     View mainContainer;
-    private boolean started = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.container_main);
         if (savedInstanceState == null) {
             mainContainer = findViewById(R.id.main_container);
-            if (((ApplicationInfo)getApplicationContext()).loggedUser == null) {
-                LoginFragment login = new LoginFragment();
-                getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
-            } else {
-                QuestListFragment questList = new QuestListFragment();
-                getSupportFragmentManager().beginTransaction().add(R.id.main_container, questList).commit();
-            }
+            LoginFragment login = new LoginFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
         }
     }
-    public boolean checkConnectionMaybeQuery (boolean query) {
+    public boolean checkConnectionMaybeQuery () {
         ConnectivityManager connection = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connection != null) {
             NetworkInfo[] info = connection.getAllNetworkInfo();
             if (info != null) {
-                for (int n = 0; n < info.length; n++) {
-                    if (info[n].getState() == NetworkInfo.State.CONNECTED) {
+                for (NetworkInfo anInfo : info) {
+                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
                         cacheParseQuestsQuery();
                         cacheParseUsersQuery();
                         return true;
@@ -78,7 +69,7 @@ public class MainActivity extends ActionBarActivity {
                         });
                     }
                     else {
-                        //TODO:Display server contact issues.
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.cant_contact_parse), Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
@@ -102,7 +93,7 @@ public class MainActivity extends ActionBarActivity {
                         });
                     }
                     else {
-                        //TODO: Display that we couldn't contact the servers.
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.cant_contact_parse), Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
@@ -124,24 +115,20 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings && ((ApplicationInfo)getApplicationContext()).loggedUser != null) {
+        if (id == R.id.action_settings && ParseUser.getCurrentUser() != null) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
         }
         if (item.getTitle().toString().equalsIgnoreCase("Log off")) {
-            ApplicationInfo app = ((ApplicationInfo)getApplicationContext());
-            app.loggedUser = null;
-            app.loggedIn = false;
-
             while (getSupportFragmentManager().popBackStackImmediate());
-            fragmentSwap(null, new LoginFragment(), null, false);
+            fragmentSwap(new LoginFragment(), null, false);
             return true;
         }
         Toast.makeText(this, "Please login first", Toast.LENGTH_LONG).show();
         return super.onOptionsItemSelected(item);
     }
-    public void fragmentSwap(Fragment current, Fragment next, Bundle args, Boolean addToBackStack) {
+    public void fragmentSwap(Fragment next, Bundle args, Boolean addToBackStack) {
         if (args != null) {
             next.setArguments(args);
         }

@@ -2,15 +2,10 @@ package com.coopinc.questchallenge.app;
 
 import android.app.Application;
 
-import com.coopinc.questchallenge.app.MainActivity;
-import com.coopinc.questchallenge.app.QuestInfo;
-import com.coopinc.questchallenge.app.User;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
 public class ApplicationInfo extends Application {
-    public boolean loggedIn = false;
-    public User loggedUser;
     @Override
     public void onCreate() {
         super.onCreate();

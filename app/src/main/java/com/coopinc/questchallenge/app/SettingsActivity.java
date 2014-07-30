@@ -3,7 +3,6 @@ package com.coopinc.questchallenge.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,13 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
 public class SettingsActivity extends Activity {
     Spinner alignmentSpinner;
     EditText displayName;
     Button resetLocation;
     Button changeName;
+    User user;
     int currentAlignment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class SettingsActivity extends Activity {
             displayName = (EditText) findViewById(R.id.public_name);
             changeName = (Button) findViewById(R.id.change_name);
             alignmentSpinner = (Spinner) findViewById(R.id.alignment_spinner);
-            User user = ((ApplicationInfo)getApplicationContext()).loggedUser;
+            user = (User) ParseUser.getCurrentUser();
             currentAlignment = user.getAlignment();
             displayName.setText(user.getName());
 
@@ -67,8 +67,6 @@ public class SettingsActivity extends Activity {
     }
 
     public void setAlignment (int id) {
-
-        User user = ((ApplicationInfo)getApplicationContext()).loggedUser;
         if (currentAlignment != id) {
             user.setAlignment(id);
             user.saveEventually();
@@ -80,7 +78,6 @@ public class SettingsActivity extends Activity {
             displayName.setError("Please enter a display name.");
         }
         else {
-            User user = ((ApplicationInfo) getApplicationContext()).loggedUser;
             user.setName(newName);
             user.saveEventually();
         }

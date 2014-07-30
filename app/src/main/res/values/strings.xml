@@ -3,6 +3,8 @@
 
     <string name="app_name">QuestChallenge</string>
     <string name="action_settings">Settings</string>
+    //Main Activity
+    <string name="cant_contact_parse">Unable to contact the parse servers, please check connection.</string>
     //Login screen
     <string name="user_name">Email</string>
     <string name="password">Password</string>
@@ -17,6 +19,7 @@
     //Registration screen
     <string name="register_email">e-mail</string>
     <string name="display_name">display name</string>
+    <string name="take_picture">Click here to take a picture!</string>
     <string name="choose_display_name">Please enter a display name.</string>
     <string name="register_password">password</string>
     <string name="verify_password">verify password</string>
@@ -28,9 +31,16 @@
     <string name="passwords_dont_match">Passwords do not match.</string>
     <string name="trying_signup">signing up, one moment...</string>
     <string name="email_taken">An account already exists with this e-mail.</string>
-
+    //View pager
+    <string name="available_quests">Available Quests</string>
+    <string name="accepted_quests">Accepted Quests</string>
+    <string name="completed_quests">Completed Quests</string>
     //Quest list screen
     <string name="loading">loading</string>
+    //Quest details screen
+    <string name="accept_quest">Accept quest.</string>
+    <string name="complete_quest">Complete quest.</string>
+    <string name="quest_already_completed">You have completed this quest.</string>
     //Settings screen
     <string name="public_name_description">This is the name that will be displayed when you post or accept a quest.</string>
     <string name="public_name">Public name</string>

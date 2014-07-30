@@ -2,8 +2,11 @@ package com.coopinc.questchallenge.app;
 
 
 
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,16 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
-
-import org.w3c.dom.Text;
-
 
 public class RegistrationFragment extends BaseFragment {
     private EditText etEmail;
@@ -28,9 +29,13 @@ public class RegistrationFragment extends BaseFragment {
     private EditText etPassword;
     private EditText etVerifyPassword;
     private Button etRegister;
+    TextView takePicture;
     private boolean registering = false;
     private TextView registeringIndicator;
-
+    private ImageView picture;
+    Camera camera;
+    boolean hasCamera = true;
+    int cameraId;
 
     public RegistrationFragment() {
         // Required empty public constructor
@@ -54,7 +59,40 @@ public class RegistrationFragment extends BaseFragment {
             }
         });
         registeringIndicator = (TextView) view.findViewById(R.id.trying_signup);
+        picture = (ImageView) view.findViewById(R.id.picture);
+        takePicture = (TextView) view.findViewById(R.id.take_picture);
+        takePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePicture();
+            }
+        });
+        pictureCheck();
         return view;
+    }
+    private void pictureCheck () {
+        if (!getMainActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            hasCamera = false;
+            Toast.makeText(getMainActivity(), "No camera found.", Toast.LENGTH_LONG).show();
+        } else {
+            cameraId = findFrontFacingCamera();
+        }
+    }
+    private int findFrontFacingCamera () {
+        for (int n = 0; n < Camera.getNumberOfCameras(); n++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(n, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                return n;
+            }
+        }
+        return -1;
+    }
+    private void managePicture(byte[] image) {
+        Log.d("picture callback", "callback is going through");
+        Bitmap bitmap;
+        bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+        picture.setImageBitmap(bitmap);
     }
     public void register () {
         if (registering)
@@ -102,7 +140,7 @@ public class RegistrationFragment extends BaseFragment {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
-                        tryLogin(email, password, e);
+                        tryLogin(email, password);
                     } else {
                         registeringIndicator.setText("");
                         registering = false;
@@ -118,14 +156,13 @@ public class RegistrationFragment extends BaseFragment {
             });
         }
     }
-    private void tryLogin(String email, String password, ParseException e) {
+    private void tryLogin(String email, String password) {
         ParseUser.logInInBackground(email.toLowerCase(), password, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
-                    ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedUser = (User) parseUser;
-                    ((ApplicationInfo)getMainActivity().getApplicationContext()).loggedIn = true;
-                    toQuestList();
+                    getMainActivity().getSupportFragmentManager().popBackStack();
+                    getMainActivity().fragmentSwap(new QuestListFragment(), null, false);
                 } else {
                     registeringIndicator.setText("Registration complete, login failed.");
                     Log.e("parse error", e.getMessage()+ " code " + Integer.toString(e.getCode()));
@@ -133,9 +170,16 @@ public class RegistrationFragment extends BaseFragment {
             }
         });
     }
-    private void toQuestList () {
-        getMainActivity().getSupportFragmentManager().popBackStack();
-        getMainActivity().fragmentSwap(this, new QuestListFragment(), null, false);
+    private void takePicture () {
+        if (cameraId >= 0 ) {
+            camera = Camera.open(cameraId);
+            camera.takePicture(null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    managePicture(data);
+                }
+            });
+        }
     }
 
 }
