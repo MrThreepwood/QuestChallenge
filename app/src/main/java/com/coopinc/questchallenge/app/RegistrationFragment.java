@@ -2,10 +2,13 @@ package com.coopinc.questchallenge.app;
 
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,8 +23,15 @@ import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+import com.parse.entity.mime.content.ContentDescriptor;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class RegistrationFragment extends BaseFragment {
     private EditText etEmail;
@@ -33,9 +43,9 @@ public class RegistrationFragment extends BaseFragment {
     private boolean registering = false;
     private TextView registeringIndicator;
     private ImageView picture;
-    Camera camera;
-    boolean hasCamera = true;
-    int cameraId;
+    private Bitmap pickedImage;
+    private String imagePath;
+    private static final int PICK_PHOTO = 100;
 
     public RegistrationFragment() {
         // Required empty public constructor
@@ -64,35 +74,10 @@ public class RegistrationFragment extends BaseFragment {
         takePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePicture();
+                findPicture();
             }
         });
-        pictureCheck();
         return view;
-    }
-    private void pictureCheck () {
-        if (!getMainActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            hasCamera = false;
-            Toast.makeText(getMainActivity(), "No camera found.", Toast.LENGTH_LONG).show();
-        } else {
-            cameraId = findFrontFacingCamera();
-        }
-    }
-    private int findFrontFacingCamera () {
-        for (int n = 0; n < Camera.getNumberOfCameras(); n++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(n, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                return n;
-            }
-        }
-        return -1;
-    }
-    private void managePicture(byte[] image) {
-        Log.d("picture callback", "callback is going through");
-        Bitmap bitmap;
-        bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-        picture.setImageBitmap(bitmap);
     }
     public void register () {
         if (registering)
@@ -136,6 +121,18 @@ public class RegistrationFragment extends BaseFragment {
             newUser.setUsername(email.toLowerCase());
             newUser.setName(displayName);
             newUser.setAlignment(1);
+            if (pickedImage != null) {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                pickedImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                byte[] imageArray = bos.toByteArray();
+                ParseFile imageFile = new ParseFile(email,imageArray, "jpeg");
+                try {
+                    imageFile.save();
+                } catch(ParseException exception) {
+
+                }
+                newUser.setUserImage(imageFile);
+            }
             newUser.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -162,7 +159,7 @@ public class RegistrationFragment extends BaseFragment {
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
                     getMainActivity().getSupportFragmentManager().popBackStack();
-                    getMainActivity().fragmentSwap(new QuestListFragment(), null, false);
+                    getMainActivity().fragmentSwap(new QuestsViewPager(), null, false);
                 } else {
                     registeringIndicator.setText("Registration complete, login failed.");
                     Log.e("parse error", e.getMessage()+ " code " + Integer.toString(e.getCode()));
@@ -170,15 +167,37 @@ public class RegistrationFragment extends BaseFragment {
             }
         });
     }
-    private void takePicture () {
-        if (cameraId >= 0 ) {
-            camera = Camera.open(cameraId);
-            camera.takePicture(null, null, new Camera.PictureCallback() {
-                @Override
-                public void onPictureTaken(byte[] data, Camera camera) {
-                    managePicture(data);
+    private void findPicture () {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, PICK_PHOTO);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch(requestCode) {
+            case PICK_PHOTO:
+                if(resultCode == Activity.RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    try {
+                        InputStream imageStream = getMainActivity().getContentResolver().openInputStream(selectedImage);
+                        pickedImage = BitmapFactory.decodeStream(imageStream);
+
+                        Bitmap scaledImage;
+                        int x = pickedImage.getWidth();
+                        int y = pickedImage.getHeight();
+                        if (y > x) {
+                            scaledImage = Bitmap.createScaledBitmap(pickedImage, x*takePicture.getWidth()/y, takePicture.getHeight(), true);
+                        } else {
+                            scaledImage = Bitmap.createScaledBitmap(pickedImage, takePicture.getWidth(), y*takePicture.getHeight()/x, true);
+                        }
+                        takePicture.setVisibility(View.INVISIBLE);
+                        picture.setImageBitmap(scaledImage);
+                    } catch (FileNotFoundException e) {
+
+                    }
                 }
-            });
         }
     }
 

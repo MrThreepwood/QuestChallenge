@@ -19,7 +19,7 @@
     //Registration screen
     <string name="register_email">e-mail</string>
     <string name="display_name">display name</string>
-    <string name="take_picture">Click here to take a picture!</string>
+    <string name="take_picture">Click here to select a picture!</string>
     <string name="choose_display_name">Please enter a display name.</string>
     <string name="register_password">password</string>
     <string name="verify_password">verify password</string>
@@ -31,12 +31,15 @@
     <string name="passwords_dont_match">Passwords do not match.</string>
     <string name="trying_signup">signing up, one moment...</string>
     <string name="email_taken">An account already exists with this e-mail.</string>
+    //Quest Layout
+    <string name="image_loading">Image loading.</string>
     //View pager
     <string name="available_quests">Available Quests</string>
     <string name="accepted_quests">Accepted Quests</string>
     <string name="completed_quests">Completed Quests</string>
     //Quest list screen
     <string name="loading">loading</string>
+    <string name="no_image_found">No image found</string>
     //Quest details screen
     <string name="accept_quest">Accept quest.</string>
     <string name="complete_quest">Complete quest.</string>

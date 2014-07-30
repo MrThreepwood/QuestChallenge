@@ -2,6 +2,7 @@ package com.coopinc.questchallenge.app;
 
 import com.parse.ParseClassName;
 
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseClassName;
@@ -45,6 +46,12 @@ public class User extends ParseUser {
 
     public void setImageUrl(String imageUrl) {
         put("imageUrl", imageUrl);
+    }
+    public ParseFile getUserImage () {
+        return getParseFile("userImage");
+    }
+    public void setUserImage (ParseFile image) {
+        put("userImage", image);
     }
 
 }

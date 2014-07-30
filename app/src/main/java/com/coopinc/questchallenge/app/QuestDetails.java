@@ -1,5 +1,7 @@
 package com.coopinc.questchallenge.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -7,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 
@@ -31,10 +36,16 @@ public class QuestDetails extends Fragment {
     private TextView mQuestGiver;
     private TextView mQuestTitle;
     private TextView mQuestDetails;
-    private GoogleMap map;
+    private SupportMapFragment map;
     private Button acceptComplete;
+    private TextView questImageLoading;
+    private ImageView questImageView;
+    private TextView giverImageLoading;
+    private ImageView giverImageView;
     private int questStatus;
     private User user;
+    static final private int mapPadding = 100;
+    private User questGiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,10 +54,13 @@ public class QuestDetails extends Fragment {
         mQuestTitle = (TextView) view.findViewById(R.id.quest_title);
         mQuestGiver = (TextView) view.findViewById(R.id.quest_giver);
         mQuestDetails = (TextView) view.findViewById(R.id.quest_details);
-        SupportMapFragment mapFrag = SupportMapFragment.newInstance();
-        map = mapFrag.getMap();
+        map = SupportMapFragment.newInstance();
         acceptComplete = (Button) view.findViewById(R.id.accept_complete);
         user = (User) ParseUser.getCurrentUser();
+        questImageLoading = (TextView) view.findViewById(R.id.quest_image_loading);
+        questImageView = (ImageView) view.findViewById(R.id.quest_image);
+        giverImageLoading = (TextView) view.findViewById(R.id.giver_image_loading);
+        giverImageView = (ImageView) view.findViewById(R.id.giver_image);
         acceptComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,7 +68,7 @@ public class QuestDetails extends Fragment {
             }
         });
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.add(view.getId(), mapFrag);
+        fragmentTransaction.add(view.getId(), map);
         fragmentTransaction.commit();
 
 
@@ -79,14 +93,14 @@ public class QuestDetails extends Fragment {
             public void done(List<QuestInfo> questInfos, ParseException e) {
                 quest = questInfos.get(args.getInt("quest"));
                 updateUI();
+                getPictures();
             }
         });
-        updateUI();
         return view;
     }
 
     private void updateUI() {
-        User questGiver = ((User)quest.getQuestGiver());
+        questGiver = ((User)quest.getQuestGiver());
         if (mQuestDetails == null)
             return;
 
@@ -103,14 +117,19 @@ public class QuestDetails extends Fragment {
 
         ParseGeoPoint giverGeoPoint = questGiver.getLocation();
         LatLng giverLatLng = new LatLng(giverGeoPoint.getLatitude(),giverGeoPoint.getLongitude());
-        Marker questGiverMarker = map.addMarker(new MarkerOptions().position(giverLatLng));
+        Marker questGiverMarker = map.getMap().addMarker(new MarkerOptions().position(giverLatLng));
         questGiverMarker.setTitle(questGiver.getName());
         ParseGeoPoint questGeoPoint = quest.getLocation();
         LatLng questLatLng = new LatLng(questGeoPoint.getLatitude(), questGeoPoint.getLongitude());
-        Marker questMarker = map.addMarker(new MarkerOptions().position(questLatLng));
+        Marker questMarker = map.getMap().addMarker(new MarkerOptions().position(questLatLng));
         questMarker.setTitle(quest.getQuestName());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(giverLatLng, 12);
-        map.moveCamera(cameraUpdate);
+        questGiverMarker.showInfoWindow();
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(giverLatLng);
+        builder.include(questLatLng);
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, mapPadding);
+        map.getMap().moveCamera(cameraUpdate);
 
     }
     private void acceptComplete () {
@@ -125,7 +144,53 @@ public class QuestDetails extends Fragment {
                 quest.removeAcceptedyBy(user.getObjectId());
                 quest.saveEventually();
                 acceptComplete.setText(getResources().getString(R.string.quest_already_completed));
-                acceptComplete.setTextColor(getResources().getColor(R.color.grey));
+                acceptComplete.setTextColor(getResources().getColor(R.color.red));
         }
+    }
+    private void getPictures(){
+        ParseFile giverImage = questGiver.getUserImage();
+        giverImage.getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] bytes, ParseException e) {
+                if(e == null && bytes != null && bytes.length != 0) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    Bitmap scaledBitmap;
+                    int x = bitmap.getWidth();
+                    int y = bitmap.getHeight();
+                    if (y > x) {
+                        scaledBitmap = Bitmap.createScaledBitmap(bitmap, x*giverImageView.getWidth()/y, giverImageView.getHeight(), true);
+                    } else {
+                        scaledBitmap = Bitmap.createScaledBitmap(bitmap, giverImageView.getWidth(), y*giverImageView.getHeight()/x, true);
+                    }
+                    giverImageView.setImageBitmap(scaledBitmap);
+                    giverImageLoading.setVisibility(View.INVISIBLE);
+                } else {
+                    giverImageLoading.setText(getResources().getString(R.string.no_image_found));
+                }
+
+            }
+        });
+        ParseFile questImage = quest.getQuestImage();
+        questImage.getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] bytes, ParseException e) {
+                if(e == null && bytes != null && bytes.length != 0) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    Bitmap scaledBitmap;
+                    int x = bitmap.getWidth();
+                    int y = bitmap.getHeight();
+                    if (y > x) {
+                        scaledBitmap = Bitmap.createScaledBitmap(bitmap, x*questImageView.getWidth()/y, questImageView.getHeight(), true);
+                    } else {
+                        scaledBitmap = Bitmap.createScaledBitmap(bitmap, questImageView.getWidth(), y*questImageView.getHeight()/x, true);
+                    }
+                    questImageView.setImageBitmap(scaledBitmap);
+                    questImageLoading.setVisibility(View.INVISIBLE);
+                } else {
+                    giverImageLoading.setText(getResources().getString(R.string.no_image_found));
+                }
+
+            }
+        });
     }
 }

@@ -1,5 +1,8 @@
 package com.coopinc.questchallenge.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,11 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -101,9 +107,6 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
                 case 2:
                     adjustedQuests.addAll(completedQuests);
         }
-        //Remove this.
-//        adjustedQuests.clear();
-//        adjustedQuests.addAll(quests);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -131,13 +134,37 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
                 convertView = inflater.inflate(R.layout.quest_layouts, null);
             }
             TextView titleView = (TextView) convertView.findViewById(R.id.quest_title);
+            final TextView imageLoadIndicator = (TextView) convertView.findViewById(R.id.image_loading);
+            final ImageView giverImageView = (ImageView) convertView.findViewById(R.id.quest_giver_image);
             QuestInfo quest = adjustedQuests.get(position);
             String questName = quest.getQuestName();
             titleView.setText(questName);
             TextView giverView = (TextView) convertView.findViewById(R.id.quest_giver);
-            String questGiver = ((User)quest.getQuestGiver()).getName();
-            giverView.setText(questGiver);
-            Log.d("Quest name", "Quest giver is " + questGiver);
+            User questGiver = (User) quest.getQuestGiver();
+            String questGiverName = questGiver.getName();
+            giverView.setText(questGiverName);
+            ParseFile giverImage = questGiver.getUserImage();
+            giverImage.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, ParseException e) {
+                    if(e == null && bytes != null && bytes.length != 0) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        Bitmap scaledBitmap;
+                        int x = bitmap.getWidth();
+                        int y = bitmap.getHeight();
+                        if (y > x) {
+                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, x*imageLoadIndicator.getWidth()/y, imageLoadIndicator.getHeight(), true);
+                        } else {
+                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, imageLoadIndicator.getWidth(), y*imageLoadIndicator.getHeight()/x, true);
+                        }
+                        giverImageView.setImageBitmap(scaledBitmap);
+                        imageLoadIndicator.setVisibility(View.INVISIBLE);
+                    } else {
+                        imageLoadIndicator.setText(getResources().getString(R.string.no_image_found));
+                    }
+
+                }
+            });
             switch (quest.getAlignment()) {
                 case 1: convertView.setBackgroundColor(getResources().getColor(R.color.grey));
                     break;

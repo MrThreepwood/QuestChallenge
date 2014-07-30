@@ -1,5 +1,6 @@
 package com.coopinc.questchallenge.app;
 
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseClassName;
@@ -94,5 +95,12 @@ public class QuestInfo extends ParseObject {
 
     public void setQuestGiver(String questGiver) {
         put("questGiver",questGiver);
+    }
+
+    public ParseFile getQuestImage () {
+        return getParseFile("questImage");
+    }
+    public void setQuestImage (ParseFile image) {
+        put("questImage", image);
     }
 }
