@@ -135,7 +135,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
             }
             TextView titleView = (TextView) convertView.findViewById(R.id.quest_title);
             final TextView imageLoadIndicator = (TextView) convertView.findViewById(R.id.image_loading);
-            final ImageView giverImageView = (ImageView) convertView.findViewById(R.id.quest_giver_image);
+            final ImageView questImageView = (ImageView) convertView.findViewById(R.id.quest_image_view);
             QuestInfo quest = adjustedQuests.get(position);
             String questName = quest.getQuestName();
             titleView.setText(questName);
@@ -143,21 +143,21 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
             User questGiver = (User) quest.getQuestGiver();
             String questGiverName = questGiver.getName();
             giverView.setText(questGiverName);
-            ParseFile giverImage = questGiver.getUserImage();
-            giverImage.getDataInBackground(new GetDataCallback() {
+            ParseFile questImage = quest.getQuestImage();
+            questImage.getDataInBackground(new GetDataCallback() {
                 @Override
                 public void done(byte[] bytes, ParseException e) {
-                    if(e == null && bytes != null && bytes.length != 0) {
+                    if (e == null && bytes != null && bytes.length != 0) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         Bitmap scaledBitmap;
                         int x = bitmap.getWidth();
                         int y = bitmap.getHeight();
                         if (y > x) {
-                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, x*imageLoadIndicator.getWidth()/y, imageLoadIndicator.getHeight(), true);
+                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, x * imageLoadIndicator.getWidth() / y, imageLoadIndicator.getHeight(), true);
                         } else {
-                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, imageLoadIndicator.getWidth(), y*imageLoadIndicator.getHeight()/x, true);
+                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, imageLoadIndicator.getWidth(), y * imageLoadIndicator.getHeight() / x, true);
                         }
-                        giverImageView.setImageBitmap(scaledBitmap);
+                        questImageView.setImageBitmap(scaledBitmap);
                         imageLoadIndicator.setVisibility(View.INVISIBLE);
                     } else {
                         imageLoadIndicator.setText(getResources().getString(R.string.no_image_found));
