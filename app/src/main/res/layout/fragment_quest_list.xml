@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.coopinc.questchallenge.app.QuestListFragment">
     <TextView
-        android:id="@+id/loading_text"
+        android:id="@+id/view_sizer"
         android:text="@string/loading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="30sp"/>
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"/>
     <ListView
         android:id="@+id/quest_list"
         android:layout_width="match_parent"

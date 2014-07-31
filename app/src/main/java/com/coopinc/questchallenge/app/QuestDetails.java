@@ -154,19 +154,13 @@ public class QuestDetails extends Fragment {
         }
     }
     private void getPictures(){
-        ParseFile giverImage = questGiver.getUserImage();
+        final ParseFile giverImage = questGiver.getUserImage();
         giverImage.getDataInBackground(new GetDataCallback() {
             @Override
             public void done(byte[] bytes, ParseException e) {
                 if(e == null && bytes != null && bytes.length != 0) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    int x = bitmap.getWidth();
-                    int y = bitmap.getHeight();
-                    if (y > x) {
-                        giverBitmap = Bitmap.createScaledBitmap(bitmap, x*giverImageView.getWidth()/y, giverImageView.getHeight(), true);
-                    } else {
-                        giverBitmap = Bitmap.createScaledBitmap(bitmap, giverImageView.getWidth(), y*giverImageView.getHeight()/x, true);
-                    }
+                    giverBitmap = BitmapAssistant.resize(bitmap, giverImageView.getWidth(), giverImageView.getHeight());
                     giverImageView.setImageBitmap(giverBitmap);
                     giverImageLoading.setVisibility(View.INVISIBLE);
                 } else {
@@ -183,13 +177,7 @@ public class QuestDetails extends Fragment {
             public void done(byte[] bytes, ParseException e) {
                 if(e == null && bytes != null && bytes.length != 0) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    int x = bitmap.getWidth();
-                    int y = bitmap.getHeight();
-                    if (y > x) {
-                        questBitmap = Bitmap.createScaledBitmap(bitmap, x*questImageView.getWidth()/y, questImageView.getHeight(), true);
-                    } else {
-                        questBitmap = Bitmap.createScaledBitmap(bitmap, questImageView.getWidth(), y*questImageView.getHeight()/x, true);
-                    }
+                    questBitmap = BitmapAssistant.resize(bitmap, questImageLoading.getWidth(), questImageLoading.getHeight());
                     questImageView.setImageBitmap(questBitmap);
                     questImageLoading.setVisibility(View.INVISIBLE);
                 } else {

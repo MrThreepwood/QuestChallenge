@@ -55,6 +55,7 @@
         <item>Evil</item>
     </string-array>
     <string name="alignment_explanation">Alignment affects the quests you can see.</string>
+    <string name="update_picture">Update picture.</string>
 
     <color name="green">#008000</color>
     <color name="red">#FF0000</color>

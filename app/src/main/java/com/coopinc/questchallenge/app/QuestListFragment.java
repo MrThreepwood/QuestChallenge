@@ -2,8 +2,8 @@ package com.coopinc.questchallenge.app;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +24,6 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class QuestListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
@@ -149,14 +148,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
                 public void done(byte[] bytes, ParseException e) {
                     if (e == null && bytes != null && bytes.length != 0) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        Bitmap scaledBitmap;
-                        int x = bitmap.getWidth();
-                        int y = bitmap.getHeight();
-                        if (y > x) {
-                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, x * imageLoadIndicator.getWidth() / y, imageLoadIndicator.getHeight(), true);
-                        } else {
-                            scaledBitmap = Bitmap.createScaledBitmap(bitmap, imageLoadIndicator.getWidth(), y * imageLoadIndicator.getHeight() / x, true);
-                        }
+                        Bitmap scaledBitmap = BitmapAssistant.resize(bitmap, 60, 60);
                         questImageView.setImageBitmap(scaledBitmap);
                         imageLoadIndicator.setVisibility(View.INVISIBLE);
                     } else {

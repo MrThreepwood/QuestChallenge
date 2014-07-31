@@ -16,9 +16,11 @@ import android.view.ViewGroup;
 public class QuestsViewPager extends Fragment  {
     ViewPager mViewPager;
     TabAdapter adapter;
+    View viewSizer;
     static CharSequence availableQuests;
     static CharSequence acceptedQuests;
     static CharSequence completedQuests;
+
 
 
     public QuestsViewPager() {
