@@ -126,7 +126,6 @@ public class SettingsActivity extends Activity {
                     try {
                         InputStream imageStream = getContentResolver().openInputStream(selectedImage);
                         Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
-                        //Bitmap scaledImage = BitmapAssistant.resizeToFit(pickedImage, ivCurrentPicture.getWidth(), ivCurrentPicture.getHeight());
                         Bitmap scaledImage = BitmapAssistant.resizeToPixelCount(pickedImage, 18000);
                         ivCurrentPicture.setImageBitmap(scaledImage);
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
