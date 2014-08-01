@@ -4,6 +4,7 @@ package com.coopinc.questchallenge.app;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,19 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class LoginFragment extends BaseFragment {
     Button loginButton;
-    EditText editName;
+    EditText etEmail;
     CheckBox rememberUserName;
     Button signUp;
-    EditText editPassword;
-    TextView loginIndicator;
+    EditText etPassword;
+    TextView tvLoginIndicator;
     boolean connection;
     boolean loggingIn;
 
@@ -40,16 +43,16 @@ public class LoginFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         loginButton = (Button) getView().findViewById(R.id.login);
-        loginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
+        tvLoginIndicator = (TextView) getView().findViewById(R.id.login_indicator);
         rememberUserName = (CheckBox) getView().findViewById(R.id.remember_user_name);
-        editName = (EditText) getView().findViewById(R.id.user_name);
+        etEmail = (EditText) getView().findViewById(R.id.user_name);
         SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
         String rememberedName = sharedPreferences.getString("userName", "");
         if (!TextUtils.isEmpty(rememberedName)) {
-            editName.setText(rememberedName);
+            etEmail.setText(rememberedName);
             rememberUserName.setChecked(true);
         }
-        editPassword = (EditText) getView().findViewById(R.id.password);
+        etPassword = (EditText) getView().findViewById(R.id.password);
         signUp = (Button) getView().findViewById(R.id.sign_up);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,11 +70,11 @@ public class LoginFragment extends BaseFragment {
     }
     private void checkConnection () {
         if (getMainActivity().checkConnectionMaybeQuery()) {
-            loginIndicator.setText("");
+            tvLoginIndicator.setText("");
             loginButton.setText(R.string.login);
             connection = true;
         }   else {
-            loginIndicator.setText(R.string.no_connection);
+            tvLoginIndicator.setText(R.string.no_connection);
             loginButton.setText(R.string.retry_connection);
             connection = false;
         }
@@ -87,20 +90,20 @@ public class LoginFragment extends BaseFragment {
             return;
         }
         boolean complete = true;
-        String userName = editName.getText().toString();
-        String password = editPassword.getText().toString();
+        String userName = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
         if(TextUtils.isEmpty(userName)) {
-            editName.setError(getResources().getString(R.string.user_name_required));
+            etEmail.setError(getResources().getString(R.string.user_name_required));
             complete = false;
         }
         if(TextUtils.isEmpty(password)){
-            editPassword.setError(getResources().getString(R.string.password_required));
+            etPassword.setError(getResources().getString(R.string.password_required));
             complete = false;
         }
 
         if (complete) {
             loggingIn = true;
-            loginIndicator.setText("One moment...");
+            tvLoginIndicator.setText("One moment...");
             ParseUser.logInInBackground(userName.toLowerCase(), password, new LogInCallback() {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
@@ -110,7 +113,14 @@ public class LoginFragment extends BaseFragment {
                     }
                     else {
                         loggingIn = false;
-                        loginIndicator.setText(R.string.login_failed);
+                        if (e.getCode() == 100) {
+                            tvLoginIndicator.setText(R.string.login_timeout);
+                        }
+
+                        else{
+                            tvLoginIndicator.setText(R.string.login_failed);
+                        }
+                        Log.e("Parse Error", e.getMessage() + "code: " + e.getCode());
                     }
                 }
             });
@@ -118,7 +128,7 @@ public class LoginFragment extends BaseFragment {
     }
     private void login () {
         if(rememberUserName.isChecked()) {
-            String name = editName.getText().toString();
+            String name = etEmail.getText().toString();
             SharedPreferences sharedPreferences = getMainActivity().getApplicationContext().getSharedPreferences("UserName", 0);
             sharedPreferences.edit().putString("userName", name).apply();
         }
@@ -130,6 +140,9 @@ public class LoginFragment extends BaseFragment {
         mainActivity.fragmentSwap(new QuestsViewPager(), null, false);
     }
     private void register () {
+        if(!connection) {
+            Toast.makeText(getMainActivity(), R.string.must_be_connected, Toast.LENGTH_LONG);
+        }
         getMainActivity().fragmentSwap(new RegistrationFragment(), null, true);
     }
 }

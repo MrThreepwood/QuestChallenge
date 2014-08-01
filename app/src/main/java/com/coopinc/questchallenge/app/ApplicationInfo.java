@@ -6,6 +6,7 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 
 public class ApplicationInfo extends Application {
+    //The parse calls can only be done once per application, this insures that.
     @Override
     public void onCreate() {
         super.onCreate();

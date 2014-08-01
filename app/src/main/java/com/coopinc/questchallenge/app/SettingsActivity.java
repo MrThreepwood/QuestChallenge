@@ -25,9 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class SettingsActivity extends Activity {
-    Spinner alignmentSpinner;
-    EditText displayName;
-    Button resetLocation;
+    Spinner spAlignment;
+    EditText etDisplayName;
     Button changeName;
     Button updatePicture;
     ImageView currentPicture;
@@ -39,9 +38,9 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             setContentView(R.layout.activity_settings);
-            displayName = (EditText) findViewById(R.id.public_name);
+            etDisplayName = (EditText) findViewById(R.id.public_name);
             changeName = (Button) findViewById(R.id.change_name);
-            alignmentSpinner = (Spinner) findViewById(R.id.alignment_spinner);
+            spAlignment = (Spinner) findViewById(R.id.alignment_spinner);
             user = (User) ParseUser.getCurrentUser();
             updatePicture = (Button) findViewById(R.id.update_picture);
             currentPicture = (ImageView) findViewById(R.id.current_image);
@@ -52,19 +51,11 @@ public class SettingsActivity extends Activity {
                 }
             });
             currentAlignment = user.getAlignment();
-            displayName.setText(user.getName());
-
-            resetLocation = (Button) findViewById(R.id.update_location);
+            etDisplayName.setText(user.getName());
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.alignment_spinner, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            alignmentSpinner.setAdapter(adapter);
-            alignmentSpinner.setSelection(currentAlignment);
-            resetLocation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    resetLocation();
-                }
-            });
+            spAlignment.setAdapter(adapter);
+            spAlignment.setSelection(currentAlignment);
         }
     }
     @Override
@@ -81,8 +72,10 @@ public class SettingsActivity extends Activity {
                     }
                 }
             });
+        } else {
+            updatePicture.setText(R.string.pick_an_image);
         }
-        alignmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spAlignment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setAlignment(position);
@@ -96,7 +89,7 @@ public class SettingsActivity extends Activity {
         changeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeName(displayName.getText().toString());
+                changeName(etDisplayName.getText().toString());
             }
         });
     }
@@ -110,15 +103,12 @@ public class SettingsActivity extends Activity {
     }
     private void changeName (String newName) {
         if(TextUtils.isEmpty(newName)) {
-            displayName.setError("Please enter a display name.");
+            etDisplayName.setError("Please enter a display name.");
         }
         else {
             user.setName(newName);
             user.saveEventually();
         }
-    }
-    private void resetLocation () {
-        //TODO:Figure out how to access gps
     }
     private void selectNewImage () {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);

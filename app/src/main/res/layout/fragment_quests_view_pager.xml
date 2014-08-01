@@ -1,13 +1,33 @@
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/quests_view_pager"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.coopinc.questchallenge.app.QuestsViewPager">
-
-    <android.support.v4.view.PagerTitleStrip
-        android:id="@+id/quest_list_type"
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+        <TextView
+            android:id="@+id/user_image_loading"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:text="@string/image_loading"/>
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
+        </FrameLayout>
+    <android.support.v4.view.ViewPager
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/quests_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
 
-</android.support.v4.view.ViewPager>
+        <android.support.v4.view.PagerTitleStrip
+            android:id="@+id/quest_list_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </android.support.v4.view.ViewPager>
+</LinearLayout>

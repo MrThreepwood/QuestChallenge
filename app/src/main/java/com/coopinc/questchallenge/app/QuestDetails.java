@@ -34,15 +34,15 @@ import com.parse.ParseUser;
 public class QuestDetails extends Fragment {
     QuestInfo quest;
 
-    private TextView mQuestGiver;
-    private TextView mQuestTitle;
-    private TextView mQuestDetails;
+    private TextView tvQuestGiver;
+    private TextView tvQuestTitle;
+    private TextView tvQuestDetails;
     private SupportMapFragment map;
     private Button acceptComplete;
-    private TextView questImageLoading;
-    private ImageView questImageView;
-    private TextView giverImageLoading;
-    private ImageView giverImageView;
+    private TextView tvQuestImageLoading;
+    private ImageView ivQuestImage;
+    private TextView tvGiverLoad;
+    private ImageView ivGiverImage;
     private int questStatus;
     private User user;
     static final private int mapPadding = 40;
@@ -57,16 +57,16 @@ public class QuestDetails extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_quest_details, container, false);
 
-        mQuestTitle = (TextView) view.findViewById(R.id.quest_title);
-        mQuestGiver = (TextView) view.findViewById(R.id.quest_giver);
-        mQuestDetails = (TextView) view.findViewById(R.id.quest_details);
+        tvQuestTitle = (TextView) view.findViewById(R.id.quest_title);
+        tvQuestGiver = (TextView) view.findViewById(R.id.quest_giver);
+        tvQuestDetails = (TextView) view.findViewById(R.id.quest_details);
         map = SupportMapFragment.newInstance();
         acceptComplete = (Button) view.findViewById(R.id.accept_complete);
         user = (User) ParseUser.getCurrentUser();
-        questImageLoading = (TextView) view.findViewById(R.id.quest_image_loading);
-        questImageView = (ImageView) view.findViewById(R.id.quest_image);
-        giverImageLoading = (TextView) view.findViewById(R.id.giver_image_loading);
-        giverImageView = (ImageView) view.findViewById(R.id.giver_image);
+        tvQuestImageLoading = (TextView) view.findViewById(R.id.quest_image_loading);
+        ivQuestImage = (ImageView) view.findViewById(R.id.quest_image);
+        tvGiverLoad = (TextView) view.findViewById(R.id.giver_image_loading);
+        ivGiverImage = (ImageView) view.findViewById(R.id.giver_image);
         acceptComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,12 +81,12 @@ public class QuestDetails extends Fragment {
         final Bundle args = getArguments();
         questStatus = args.getInt("questStatus");
         switch (questStatus) {
-            case 0: acceptComplete.setText(getResources().getString(R.string.accept_quest));
+            case 0: acceptComplete.setText(R.string.accept_quest);
                 break;
-            case 1: acceptComplete.setText(getResources().getString(R.string.complete_quest));
+            case 1: acceptComplete.setText(R.string.complete_quest);
                 break;
             case 2:
-                acceptComplete.setText(getResources().getString(R.string.quest_already_completed));
+                acceptComplete.setText(R.string.quest_already_completed);
                 acceptComplete.setTextColor(getResources().getColor(R.color.red));
                 break;
         }
@@ -107,19 +107,19 @@ public class QuestDetails extends Fragment {
 
     private void updateUI() {
         questGiver = ((User)quest.getQuestGiver());
-        if (mQuestDetails == null)
+        if (tvQuestDetails == null)
             return;
 
-        mQuestTitle.setText(quest.getQuestName());
+        tvQuestTitle.setText(quest.getQuestName());
         switch(quest.getAlignment()) {
-            case 1: mQuestTitle.setTextColor(getResources().getColor(R.color.grey));
+            case 1: tvQuestTitle.setTextColor(getResources().getColor(R.color.grey));
                 break;
-            case 2: mQuestTitle.setTextColor(getResources().getColor(R.color.red));
+            case 2: tvQuestTitle.setTextColor(getResources().getColor(R.color.red));
                 break;
-            default: mQuestTitle.setTextColor(getResources().getColor(R.color.green));
+            default: tvQuestTitle.setTextColor(getResources().getColor(R.color.green));
         }
-        mQuestGiver.setText("Posted by:" + questGiver.getName());
-        mQuestDetails.setText(quest.getDescription());
+        tvQuestGiver.setText("Posted by:" + questGiver.getName());
+        tvQuestDetails.setText(quest.getDescription());
 
         ParseGeoPoint giverGeoPoint = questGiver.getLocation();
         LatLng giverLatLng = new LatLng(giverGeoPoint.getLatitude(),giverGeoPoint.getLongitude());
@@ -142,14 +142,14 @@ public class QuestDetails extends Fragment {
         switch (questStatus) {
             case 0:
                 quest.addAcceptedBy(user.getObjectId());
-                acceptComplete.setText(getResources().getString(R.string.complete_quest));
+                acceptComplete.setText(R.string.complete_quest);
                 quest.saveEventually();
                 break;
             case 1:
                 quest.setCompletedBy(user.getObjectId());
                 quest.removeAcceptedyBy(user.getObjectId());
                 quest.saveEventually();
-                acceptComplete.setText(getResources().getString(R.string.quest_already_completed));
+                acceptComplete.setText(R.string.quest_already_completed);
                 acceptComplete.setTextColor(getResources().getColor(R.color.red));
         }
     }
@@ -160,11 +160,11 @@ public class QuestDetails extends Fragment {
             public void done(byte[] bytes, ParseException e) {
                 if(e == null && bytes != null && bytes.length != 0) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    giverBitmap = BitmapAssistant.resize(bitmap, giverImageView.getWidth(), giverImageView.getHeight());
-                    giverImageView.setImageBitmap(giverBitmap);
-                    giverImageLoading.setVisibility(View.INVISIBLE);
+                    giverBitmap = BitmapAssistant.resize(bitmap, ivGiverImage.getWidth(), ivGiverImage.getHeight());
+                    ivGiverImage.setImageBitmap(giverBitmap);
+                    tvGiverLoad.setVisibility(View.INVISIBLE);
                 } else {
-                    giverImageLoading.setText(getResources().getString(R.string.no_image_found));
+                    tvGiverLoad.setText(R.string.no_image_found);
                 }
                 if(bitmapsReady)
                     updateMarkers();
@@ -177,11 +177,11 @@ public class QuestDetails extends Fragment {
             public void done(byte[] bytes, ParseException e) {
                 if(e == null && bytes != null && bytes.length != 0) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    questBitmap = BitmapAssistant.resize(bitmap, questImageLoading.getWidth(), questImageLoading.getHeight());
-                    questImageView.setImageBitmap(questBitmap);
-                    questImageLoading.setVisibility(View.INVISIBLE);
+                    questBitmap = BitmapAssistant.resize(bitmap, tvQuestImageLoading.getWidth(), tvQuestImageLoading.getHeight());
+                    ivQuestImage.setImageBitmap(questBitmap);
+                    tvQuestImageLoading.setVisibility(View.INVISIBLE);
                 } else {
-                    giverImageLoading.setText(getResources().getString(R.string.no_image_found));
+                    tvGiverLoad.setText(R.string.no_image_found);
                 }
                 if(bitmapsReady)
                     updateMarkers();

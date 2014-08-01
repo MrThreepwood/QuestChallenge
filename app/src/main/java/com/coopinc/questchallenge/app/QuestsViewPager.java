@@ -2,6 +2,8 @@ package com.coopinc.questchallenge.app;
 
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,13 +12,21 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.parse.GetDataCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 
 public class QuestsViewPager extends Fragment  {
+    TextView tvUserImageLoad;
+    ImageView ivUserImage;
     ViewPager mViewPager;
     TabAdapter adapter;
-    View viewSizer;
     static CharSequence availableQuests;
     static CharSequence acceptedQuests;
     static CharSequence completedQuests;
@@ -33,7 +43,10 @@ public class QuestsViewPager extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_quests_view_pager, container, false);
-        mViewPager = (ViewPager) view;
+        mViewPager = (ViewPager) view.findViewById(R.id.quests_view_pager);
+        ivUserImage = (ImageView) view.findViewById(R.id.user_image);
+        tvUserImageLoad = (TextView) view.findViewById(R.id.user_image_loading);
+        loadUserImage();
         adapter = new TabAdapter(getChildFragmentManager());
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(3);
@@ -74,6 +87,29 @@ public class QuestsViewPager extends Fragment  {
         }
 
     }
-
+    private void loadUserImage () {
+        ParseFile userImageFile = ((User)ParseUser.getCurrentUser()).getUserImage();
+        if(userImageFile != null) {
+            userImageFile.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, ParseException e) {
+                    if (e == null && bytes != null && bytes.length != 0) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        ivUserImage.setImageBitmap(bitmap);
+                        tvUserImageLoad.setVisibility(View.GONE);
+                    }
+                }
+            });
+        } else {
+            tvUserImageLoad.setText(R.string.choose_an_image);
+            tvUserImageLoad.setClickable(true);
+            tvUserImageLoad.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity)getActivity()).startSettingsActivity();
+                }
+            });
+        }
+    }
 
 }

@@ -33,12 +33,6 @@
             android:layout_height="wrap_content"
             android:text="@string/alignment_explanation"/>
     </LinearLayout>
-    <Button
-        android:id="@+id/update_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/update_location"/>
     <ImageView
         android:id="@+id/current_image"
         android:layout_width="200dp"

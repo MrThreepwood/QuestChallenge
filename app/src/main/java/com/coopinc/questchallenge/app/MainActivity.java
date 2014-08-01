@@ -116,12 +116,12 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings && ParseUser.getCurrentUser() != null) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startSettingsActivity();
             return true;
         }
         if (item.getTitle().toString().equalsIgnoreCase("Log off")) {
             while (getSupportFragmentManager().popBackStackImmediate());
+            ParseUser.logOut();
             fragmentSwap(new LoginFragment(), null, false);
             return true;
         }
@@ -138,5 +138,9 @@ public class MainActivity extends ActionBarActivity {
             ft.addToBackStack(null);
         }
         ft.commit();
+    }
+    public void startSettingsActivity () {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

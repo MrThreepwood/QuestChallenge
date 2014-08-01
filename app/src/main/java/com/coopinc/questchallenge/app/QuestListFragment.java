@@ -152,7 +152,7 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
                         questImageView.setImageBitmap(scaledBitmap);
                         imageLoadIndicator.setVisibility(View.INVISIBLE);
                     } else {
-                        imageLoadIndicator.setText(getResources().getString(R.string.no_image_found));
+                        imageLoadIndicator.setText(R.string.no_image_found);
                     }
 
                 }

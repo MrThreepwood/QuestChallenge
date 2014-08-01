@@ -4,10 +4,8 @@ package com.coopinc.questchallenge.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,18 +17,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
-import com.parse.entity.mime.content.ContentDescriptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class RegistrationFragment extends BaseFragment {
@@ -38,11 +33,11 @@ public class RegistrationFragment extends BaseFragment {
     private EditText etDisplayName;
     private EditText etPassword;
     private EditText etVerifyPassword;
-    private Button etRegister;
+    private Button registerButton;
     TextView takePicture;
     private boolean registering = false;
     private TextView registeringIndicator;
-    private ImageView picture;
+    private ImageView ivPicture;
     private Bitmap pickedImage;
     private String imagePath;
     private static final int PICK_PHOTO = 100;
@@ -61,15 +56,15 @@ public class RegistrationFragment extends BaseFragment {
         etDisplayName = (EditText) view.findViewById(R.id.display_name);
         etPassword = (EditText) view.findViewById(R.id.register_password);
         etVerifyPassword = (EditText) view.findViewById(R.id.verify_password);
-        etRegister = (Button) view.findViewById(R.id.register);
-        etRegister.setOnClickListener(new View.OnClickListener() {
+        registerButton = (Button) view.findViewById(R.id.register);
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 register();
             }
         });
         registeringIndicator = (TextView) view.findViewById(R.id.trying_signup);
-        picture = (ImageView) view.findViewById(R.id.picture);
+        ivPicture = (ImageView) view.findViewById(R.id.picture);
         takePicture = (TextView) view.findViewById(R.id.take_picture);
         takePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +109,7 @@ public class RegistrationFragment extends BaseFragment {
         }
         if(complete) {
             registering = true;
-            registeringIndicator.setText(getResources().getString(R.string.trying_signup));
+            registeringIndicator.setText(R.string.trying_signup);
             User newUser = new User();
             newUser.setEmail(email.toLowerCase());
             newUser.setPassword(password);
@@ -185,7 +180,7 @@ public class RegistrationFragment extends BaseFragment {
                         pickedImage = BitmapFactory.decodeStream(imageStream);
                         pickedImage = BitmapAssistant.resize(pickedImage, takePicture.getWidth(), takePicture.getHeight());
                         takePicture.setVisibility(View.INVISIBLE);
-                        picture.setImageBitmap(pickedImage);
+                        ivPicture.setImageBitmap(pickedImage);
                     } catch (FileNotFoundException e) {
 
                     }
