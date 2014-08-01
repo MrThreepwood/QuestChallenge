@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 
 public class BitmapAssistant {
-    public static Bitmap resize(Bitmap toResize, int fitX, int fitY) {
+    public static Bitmap resizeToFit(Bitmap toResize, int fitX, int fitY) {
         int bitY = toResize.getHeight();
         int bitX = toResize.getWidth();
         Bitmap scaledBitmap;
@@ -16,5 +16,13 @@ public class BitmapAssistant {
             scaledBitmap = Bitmap.createScaledBitmap(toResize, bitX*fitY/bitY, fitY, true);
         }
         return scaledBitmap;
+    }
+    public static Bitmap resizeToPixelCount (Bitmap toResize, int totalPixels) {
+        double x = toResize.getWidth();
+        double y = toResize.getHeight();
+        double ratio = x/y;
+        x = Math.sqrt(totalPixels/ratio);
+        y = x/ratio;
+        return Bitmap.createScaledBitmap(toResize, (int) x, (int) y, true);
     }
 }

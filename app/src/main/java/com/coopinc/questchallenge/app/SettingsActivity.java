@@ -59,8 +59,8 @@ public class SettingsActivity extends Activity {
         }
     }
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         ParseFile userImageFile = user.getUserImage();
         if(userImageFile != null) {
             userImageFile.getDataInBackground(new GetDataCallback() {
@@ -126,7 +126,8 @@ public class SettingsActivity extends Activity {
                     try {
                         InputStream imageStream = getContentResolver().openInputStream(selectedImage);
                         Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
-                        Bitmap scaledImage = BitmapAssistant.resize(pickedImage, ivCurrentPicture.getWidth(), ivCurrentPicture.getHeight());
+                        //Bitmap scaledImage = BitmapAssistant.resizeToFit(pickedImage, ivCurrentPicture.getWidth(), ivCurrentPicture.getHeight());
+                        Bitmap scaledImage = BitmapAssistant.resizeToPixelCount(pickedImage, 18000);
                         ivCurrentPicture.setImageBitmap(scaledImage);
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
                         scaledImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);

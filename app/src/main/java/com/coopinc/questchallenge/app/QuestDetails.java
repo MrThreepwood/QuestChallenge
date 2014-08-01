@@ -105,10 +105,16 @@ public class QuestDetails extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (quest != null) {
+
+        }
+    }
+
     private void updateUI() {
         questGiver = ((User)quest.getQuestGiver());
-        if (tvQuestDetails == null)
-            return;
 
         tvQuestTitle.setText(quest.getQuestName());
         switch(quest.getAlignment()) {
@@ -138,6 +144,7 @@ public class QuestDetails extends Fragment {
         map.getMap().moveCamera(cameraUpdate);
 
     }
+
     private void acceptComplete () {
         switch (questStatus) {
             case 0:
@@ -161,7 +168,7 @@ public class QuestDetails extends Fragment {
                 public void done(byte[] bytes, ParseException e) {
                     if (e == null && bytes != null && bytes.length != 0) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        giverBitmap = BitmapAssistant.resize(bitmap, ivGiverImage.getWidth(), ivGiverImage.getHeight());
+                        giverBitmap = BitmapAssistant.resizeToFit(bitmap, ivGiverImage.getWidth(), ivGiverImage.getHeight());
                         ivGiverImage.setImageBitmap(giverBitmap);
                         tvGiverLoad.setVisibility(View.INVISIBLE);
                     } else {
@@ -180,7 +187,7 @@ public class QuestDetails extends Fragment {
                 public void done(byte[] bytes, ParseException e) {
                     if (e == null && bytes != null && bytes.length != 0) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        questBitmap = BitmapAssistant.resize(bitmap, tvQuestImageLoading.getWidth(), tvQuestImageLoading.getHeight());
+                        questBitmap = BitmapAssistant.resizeToFit(bitmap, tvQuestImageLoading.getWidth(), tvQuestImageLoading.getHeight());
                         ivQuestImage.setImageBitmap(questBitmap);
                         tvQuestImageLoading.setVisibility(View.INVISIBLE);
                     } else {

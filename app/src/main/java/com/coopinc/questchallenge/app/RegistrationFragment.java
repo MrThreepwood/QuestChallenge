@@ -178,7 +178,7 @@ public class RegistrationFragment extends BaseFragment {
                     try {
                         InputStream imageStream = getMainActivity().getContentResolver().openInputStream(selectedImage);
                         pickedImage = BitmapFactory.decodeStream(imageStream);
-                        pickedImage = BitmapAssistant.resize(pickedImage, takePicture.getWidth(), takePicture.getHeight());
+                        pickedImage = BitmapAssistant.resizeToFit(pickedImage, takePicture.getWidth(), takePicture.getHeight());
                         takePicture.setVisibility(View.INVISIBLE);
                         ivPicture.setImageBitmap(pickedImage);
                     } catch (FileNotFoundException e) {
