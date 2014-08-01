@@ -22,6 +22,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,5 +178,6 @@ public class QuestListFragment extends BaseFragment implements AdapterView.OnIte
         args.putInt("questStatus", questDisplayStatus);
         getMainActivity().fragmentSwap(new QuestDetails(), args, true);
     }
+
 }
 

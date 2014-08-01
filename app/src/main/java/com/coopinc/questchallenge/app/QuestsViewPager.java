@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.GetDataCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -25,6 +24,7 @@ import com.parse.ParseUser;
 public class QuestsViewPager extends Fragment  {
     TextView tvUserImageLoad;
     ImageView ivUserImage;
+    Bitmap userImage;
     ViewPager mViewPager;
     TabAdapter adapter;
     static CharSequence availableQuests;
@@ -88,6 +88,7 @@ public class QuestsViewPager extends Fragment  {
 
     }
     private void loadUserImage () {
+
         ParseFile userImageFile = ((User)ParseUser.getCurrentUser()).getUserImage();
         if(userImageFile != null) {
             userImageFile.getDataInBackground(new GetDataCallback() {
@@ -96,6 +97,7 @@ public class QuestsViewPager extends Fragment  {
                     if (e == null && bytes != null && bytes.length != 0) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         ivUserImage.setImageBitmap(bitmap);
+                        userImage = bitmap;
                         tvUserImageLoad.setVisibility(View.GONE);
                     }
                 }
@@ -111,5 +113,4 @@ public class QuestsViewPager extends Fragment  {
             });
         }
     }
-
 }

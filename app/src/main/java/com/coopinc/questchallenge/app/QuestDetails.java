@@ -153,44 +153,57 @@ public class QuestDetails extends Fragment {
                 acceptComplete.setTextColor(getResources().getColor(R.color.red));
         }
     }
-    private void getPictures(){
-        final ParseFile giverImage = questGiver.getUserImage();
-        giverImage.getDataInBackground(new GetDataCallback() {
-            @Override
-            public void done(byte[] bytes, ParseException e) {
-                if(e == null && bytes != null && bytes.length != 0) {
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    giverBitmap = BitmapAssistant.resize(bitmap, ivGiverImage.getWidth(), ivGiverImage.getHeight());
-                    ivGiverImage.setImageBitmap(giverBitmap);
-                    tvGiverLoad.setVisibility(View.INVISIBLE);
-                } else {
-                    tvGiverLoad.setText(R.string.no_image_found);
+    private void getPictures() {
+        if (giverBitmap == null) {
+            ParseFile giverImage = questGiver.getUserImage();
+            giverImage.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, ParseException e) {
+                    if (e == null && bytes != null && bytes.length != 0) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        giverBitmap = BitmapAssistant.resize(bitmap, ivGiverImage.getWidth(), ivGiverImage.getHeight());
+                        ivGiverImage.setImageBitmap(giverBitmap);
+                        tvGiverLoad.setVisibility(View.INVISIBLE);
+                    } else {
+                        tvGiverLoad.setText(R.string.no_image_found);
+                    }
+                    if (bitmapsReady)
+                        updateMarkers();
+                    bitmapsReady = true;
                 }
-                if(bitmapsReady)
-                    updateMarkers();
-                bitmapsReady = true;
-            }
-        });
-        ParseFile questImage = quest.getQuestImage();
-        questImage.getDataInBackground(new GetDataCallback() {
-            @Override
-            public void done(byte[] bytes, ParseException e) {
-                if(e == null && bytes != null && bytes.length != 0) {
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    questBitmap = BitmapAssistant.resize(bitmap, tvQuestImageLoading.getWidth(), tvQuestImageLoading.getHeight());
-                    ivQuestImage.setImageBitmap(questBitmap);
-                    tvQuestImageLoading.setVisibility(View.INVISIBLE);
-                } else {
-                    tvGiverLoad.setText(R.string.no_image_found);
+            });
+        }
+        if (questBitmap == null) {
+            ParseFile questImage = quest.getQuestImage();
+            questImage.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, ParseException e) {
+                    if (e == null && bytes != null && bytes.length != 0) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        questBitmap = BitmapAssistant.resize(bitmap, tvQuestImageLoading.getWidth(), tvQuestImageLoading.getHeight());
+                        ivQuestImage.setImageBitmap(questBitmap);
+                        tvQuestImageLoading.setVisibility(View.INVISIBLE);
+                    } else {
+                        tvGiverLoad.setText(R.string.no_image_found);
+                    }
+                    if (bitmapsReady)
+                        updateMarkers();
+                    bitmapsReady = true;
                 }
-                if(bitmapsReady)
-                    updateMarkers();
-                bitmapsReady = true;
-            }
-        });
+            });
+        }
     }
     private void updateMarkers() {
         questGiverMarker.setIcon(BitmapDescriptorFactory.fromBitmap(giverBitmap));
         questMarker.setIcon(BitmapDescriptorFactory.fromBitmap(questBitmap));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ivGiverImage.setImageBitmap(null);
+        ivQuestImage.setImageBitmap(null);
+        questBitmap = null;
+        giverBitmap = null;
     }
 }

@@ -32,8 +32,13 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.container_main);
         if (savedInstanceState == null) {
             mainContainer = findViewById(R.id.main_container);
-            LoginFragment login = new LoginFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.main_container, login).commit();
+            if (ParseUser.getCurrentUser() == null) {
+                LoginFragment login = new LoginFragment();
+                getSupportFragmentManager().beginTransaction().add(mainContainer.getId(), login).commit();
+            } else {
+                QuestsViewPager viewPager = new QuestsViewPager();
+                getSupportFragmentManager().beginTransaction().add(mainContainer.getId(), viewPager).commit();
+            }
         }
     }
     public boolean checkConnectionMaybeQuery () {

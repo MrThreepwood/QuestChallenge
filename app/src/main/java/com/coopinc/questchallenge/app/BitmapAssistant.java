@@ -11,9 +11,9 @@ public class BitmapAssistant {
         //This if checks whether the image would overflow the width of the container before the length and then scales the one
         //that would overflow first to the maximum for the fit size given.
         if (bitX/fitX > bitY/fitY) {
-            scaledBitmap = Bitmap.createScaledBitmap(toResize, fitX, bitY*fitY/bitX, true);
+            scaledBitmap = Bitmap.createScaledBitmap(toResize, fitX, bitY*fitX/bitX, true);
         } else {
-            scaledBitmap = Bitmap.createScaledBitmap(toResize, bitX*fitX/bitY, fitY, true);
+            scaledBitmap = Bitmap.createScaledBitmap(toResize, bitX*fitY/bitY, fitY, true);
         }
         return scaledBitmap;
     }

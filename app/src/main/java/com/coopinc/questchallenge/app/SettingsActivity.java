@@ -29,7 +29,7 @@ public class SettingsActivity extends Activity {
     EditText etDisplayName;
     Button changeName;
     Button updatePicture;
-    ImageView currentPicture;
+    ImageView ivCurrentPicture;
     User user;
     int currentAlignment;
     private static final int PICK_PHOTO = 100;
@@ -43,7 +43,7 @@ public class SettingsActivity extends Activity {
             spAlignment = (Spinner) findViewById(R.id.alignment_spinner);
             user = (User) ParseUser.getCurrentUser();
             updatePicture = (Button) findViewById(R.id.update_picture);
-            currentPicture = (ImageView) findViewById(R.id.current_image);
+            ivCurrentPicture = (ImageView) findViewById(R.id.current_image);
             updatePicture.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -68,7 +68,7 @@ public class SettingsActivity extends Activity {
                 public void done(byte[] bytes, ParseException e) {
                     if (e == null && bytes != null && bytes.length != 0) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        currentPicture.setImageBitmap(bitmap);
+                        ivCurrentPicture.setImageBitmap(bitmap);
                     }
                 }
             });
@@ -126,10 +126,10 @@ public class SettingsActivity extends Activity {
                     try {
                         InputStream imageStream = getContentResolver().openInputStream(selectedImage);
                         Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
-                        Bitmap scaledImage = BitmapAssistant.resize(pickedImage, currentPicture.getWidth(), currentPicture.getHeight());
-                        currentPicture.setImageBitmap(scaledImage);
+                        Bitmap scaledImage = BitmapAssistant.resize(pickedImage, ivCurrentPicture.getWidth(), ivCurrentPicture.getHeight());
+                        ivCurrentPicture.setImageBitmap(scaledImage);
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        pickedImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                        scaledImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                         byte[] imageArray = bos.toByteArray();
                         ParseFile imageFile = new ParseFile(user.getUserName(),imageArray, "jpg");
                         try {
@@ -144,5 +144,11 @@ public class SettingsActivity extends Activity {
                     }
                 }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ivCurrentPicture.setImageBitmap(null);
     }
 }
